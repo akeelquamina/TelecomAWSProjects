@@ -17,4 +17,4 @@ EXPOSE 5000
 ENV NAME call-status-service
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["python", "call-status-service.py"]
