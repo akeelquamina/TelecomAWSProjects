@@ -1,17 +1,33 @@
-# Import necessary libraries
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
-# Create Flask application
 app = Flask(__name__)
 
-# Endpoint to get billing information for a call
-@app.route('/billing/<int:call_id>', methods=['GET'])
-def get_billing_info(call_id):
-    # Perform billing logic (replace with industry standards)
-    # For simplicity, just returning a sample billing information
-    return jsonify({'call_id': call_id, 'amount': 10.5, 'currency': 'USD'}), 200
+# Dummy database for storing user balances
+user_balances = {'user1': 100, 'user2': 50, 'user3': 200}
 
-# Main entry point of the application
+
+@app.route('/billing', methods=['POST'])
+def charge_user():
+    data = request.get_json()
+
+    user_id = data.get('user_id')
+    amount = data.get('amount')
+
+    if not user_id or not amount:
+        return jsonify({'error': 'Invalid request'}), 400
+
+    if user_id not in user_balances:
+        return jsonify({'error': 'User not found'}), 404
+
+    current_balance = user_balances[user_id]
+
+    if current_balance < amount:
+        return jsonify({'error': 'Insufficient funds'}), 403
+
+    user_balances[user_id] -= amount
+
+    return jsonify({'message': f'Charged {amount} to user {user_id} successfully'})
+
+
 if __name__ == '__main__':
-    # Run the application on port 5002
-    app.run(host='0.0.0.0', port=5002)
+    app.run(debug=True)
