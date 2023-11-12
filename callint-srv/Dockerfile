@@ -17,4 +17,4 @@ EXPOSE 5000
 ENV NAME call-initiation-service
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["python", "call-initiation-service.py"]
