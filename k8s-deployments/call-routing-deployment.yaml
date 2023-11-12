@@ -1,0 +1,20 @@
+# call-routing-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: call-routing-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: call-routing-service
+  template:
+    metadata:
+      labels:
+        app: call-routing-service
+    spec:
+      containers:
+        - name: call-routing-container
+          image: akeelquamina/call-routing-service:latest
+          ports:
+            - containerPort: 8080
