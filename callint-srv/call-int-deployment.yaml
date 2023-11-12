@@ -1,0 +1,20 @@
+# call-int-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: call-initiation-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: call-initiation-service
+  template:
+    metadata:
+      labels:
+        app: call-initiation-service
+    spec:
+      containers:
+        - name: call-int-container
+          image: akeelquamina/call-processing-service:latest
+          ports:
+            - containerPort: 8080
