@@ -28,6 +28,5 @@ def charge_user():
 
     return jsonify({'message': f'Charged {amount} to user {user_id} successfully'})
 
-
 if __name__ == '__main__':
     app.run(debug=True)
