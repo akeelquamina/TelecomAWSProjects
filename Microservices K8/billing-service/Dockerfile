@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-CMD ["python", "billing-service.py"]
+CMD ["python", "billing_service.py"]
