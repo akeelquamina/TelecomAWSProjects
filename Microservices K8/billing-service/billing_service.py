@@ -5,11 +5,9 @@ app = Flask(__name__)
 # Dummy database for storing user balances
 user_balances = {'user1': 100, 'user2': 50, 'user3': 200}
 
-
 @app.route('/billing', methods=['POST'])
 def charge_user():
     data = request.get_json()
-
     user_id = data.get('user_id')
     amount = data.get('amount')
 
@@ -25,8 +23,7 @@ def charge_user():
         return jsonify({'error': 'Insufficient funds'}), 403
 
     user_balances[user_id] -= amount
-
     return jsonify({'message': f'Charged {amount} to user {user_id} successfully'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5002)
