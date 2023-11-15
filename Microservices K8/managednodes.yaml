@@ -1,0 +1,19 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: QuamTelco_EKS
+  region: us-east-2
+
+nodeGroups:
+  - name: TAS
+    instanceType: t3.small
+    minSize: 1
+    maxSize: 2
+    desiredCapacity: 2
+    volumeSize: 8
+    subnets:
+      - subnet-0b267b7f2a11082ab
+      - subnet-09b64bf069a48fbe7
+    securityGroups:
+      - EKS-Test-SG
