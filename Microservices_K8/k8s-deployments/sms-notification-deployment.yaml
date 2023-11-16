@@ -1,4 +1,3 @@
-# sms-notification-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,7 +13,7 @@ spec:
         app: sms-notification-service
     spec:
       containers:
-        - name: sms-notification-container
+        - name: sms-notification-service-container
           image: akeelquamina/sms-notification-service:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 5000
