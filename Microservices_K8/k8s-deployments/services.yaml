@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: billing-service
+spec:
+  selector:
+    app: billing-service
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sms-notification-service
+spec:
+  selector:
+    app: sms-notification-service
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: call-routing-service
+spec:
+  selector:
+    app: call-routing-service
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+  type: LoadBalancer
