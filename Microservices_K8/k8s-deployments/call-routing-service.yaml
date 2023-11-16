@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: Routing_ELB
+  name: Call-Routing-ELB
 spec:
   selector:
-    app: Routing_ELB
+    app: Call-Routing-ELB
   ports:
     - protocol: TCP
       port: 80
