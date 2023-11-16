@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: Billing-ELB
+  name: billing-elb
 spec:
   selector:
-    app: Billing-ELB
+    app: billing-elb
   ports:
     - protocol: TCP
       port: 80
