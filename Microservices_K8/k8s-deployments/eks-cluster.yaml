@@ -14,5 +14,4 @@ nodeGroups:
     volumeSize: 20
     amiFamily: AmazonLinux2
     tags:
-      - key: "nodegroup-type"
-        value: "worker"
+      nodegroup-type: "worker"
