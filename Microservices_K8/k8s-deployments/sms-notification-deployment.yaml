@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: sms-notification-service-container
-          image: akeelquamina/sms-notification-service:latest
+          image: akeelquamina/sms-notification-service:v1
           ports:
             - containerPort: 5000

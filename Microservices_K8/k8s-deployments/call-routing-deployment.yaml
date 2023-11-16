@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: call-routing-service-container
-          image: akeelquamina/call-routing-service:latest
+          image: akeelquamina/call-routing-service:v1
           ports:
             - containerPort: 5002
