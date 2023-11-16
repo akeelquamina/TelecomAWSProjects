@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sms-notification-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sms-notification-service
+  template:
+    metadata:
+      labels:
+        app: sms-notification-service
+    spec:
+      containers:
+        - name: sms-notification-service-container
+          image: akeelquamina/sms-notification-service:v1
+          ports:
+            - containerPort: 5000
