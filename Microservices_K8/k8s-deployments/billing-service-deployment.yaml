@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: billing-service-container
-          image: akeelquamina/billing-service:latest
+          image: akeelquamina/billing-service:v1
           ports:
             - containerPort: 5001
