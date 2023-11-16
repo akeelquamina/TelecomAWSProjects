@@ -1,11 +1,11 @@
-FROM python:3.8
+# Dockerfile for Billing Service
+FROM python:3.9
 
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -r requirements.txt
-
-COPY . /app
+COPY billing_service.py .
 
 CMD ["python", "billing_service.py"]
