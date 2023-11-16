@@ -1,0 +1,13 @@
+# billing-service-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: Billing_ELB
+spec:
+  selector:
+    app: Billing_ELB
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
