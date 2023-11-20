@@ -1,0 +1,94 @@
+{
+    "pipeline": {
+      "name": "QuamTel_Pipeline",
+      "roleArn": "arn:aws:iam::522424656191:role/service-role/AWSCodePipelineServiceRole-us-east-2-QuamTel_Pipeline",
+      "artifactStore": {
+        "type": "S3",
+        "location": "s3://codepipeline-us-east-2-226598719037/"
+      },
+      "stages": [
+        {
+          "name": "Source",
+          "actions": [
+            {
+              "name": "SourceAction",
+              "actionTypeId": {
+                "category": "Source",
+                "owner": "AWS",
+                "version": "1",
+                "provider": "QuamTel-Repo"
+              },
+              "configuration": {
+                "ConnectionArn": "arn:aws:codestar-connections:us-east-2:522424656191:connection/2e5643f4-d11f-4943-a081-c0fa40ebf2ea",
+                "FullRepositoryId": "akeelquamina/TelecomAWSProjects",
+                "Branch": "main",
+                "PollForSourceChanges": "true"
+              },
+              "outputArtifacts": [
+                {
+                  "name": "SourceOutput"
+                }
+              ],
+              "runOrder": 1
+            }
+          ]
+        },
+        {
+          "name": "Build",
+          "actions": [
+            {
+              "name": "BuildAction",
+              "actionTypeId": {
+                "category": "Build",
+                "owner": "AWS",
+                "version": "1",
+                "provider": "CodeBuild"
+              },
+              "configuration": {
+                "ProjectName": "QuamTel_Prod"
+              },
+              "inputArtifacts": [
+                {
+                  "name": "SourceOutput"
+                }
+              ],
+              "outputArtifacts": [
+                {
+                  "name": "BuildOutput"
+                }
+              ],
+              "runOrder": 1
+            }
+          ]
+        },
+        {
+          "name": "DeployToEKS",
+          "actions": [
+            {
+              "name": "DeployToEKSAction",
+              "actionTypeId": {
+                "category": "Deploy",
+                "owner": "AWS",
+                "version": "1",
+                "provider": "EKS"
+              },
+              "configuration": {
+                "ClusterName": "QuamTel",
+                "Namespace": "Microservices",
+                "Image1": "akeelquamina/sms-notification-service:v1",
+                "Image2": "akeelquamina/billing-service:v1",
+                "Image3": "akeelquamina/call-routing-service:v1"
+              },
+              "inputArtifacts": [
+                {
+                  "name": "BuildOutput"
+                }
+              ],
+              "runOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  }
+  
