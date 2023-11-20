@@ -45,7 +45,7 @@
                 "provider": "CodeBuild"
               },
               "configuration": {
-                "ProjectName": "QuamTel_Prod"
+                "ProjectName": "QuamTel-Mircoservices"
               },
               "inputArtifacts": [
                 {
