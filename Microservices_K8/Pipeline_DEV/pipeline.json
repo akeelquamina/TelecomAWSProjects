@@ -4,7 +4,7 @@
       "roleArn": "arn:aws:iam::522424656191:role/service-role/AWSCodePipelineServiceRole-us-east-2-QuamTel_Pipeline",
       "artifactStore": {
         "type": "S3",
-        "location": "quamtel"
+        "location": "quamtelprod"
       },
       "stages": [
         {
