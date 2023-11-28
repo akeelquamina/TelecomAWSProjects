@@ -18,15 +18,15 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'DockerHub_Connection', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                         // Pull and build Docker images
                         sh 'docker pull akeelquamina/billing-service:v1 || true'
-                        sh 'docker build -t akeelquamina/billing-service:latest'
+                        sh 'docker buildx build -t akeelquamina/billing-service:latest'
                         sh 'docker push akeelquamina/billing-service:latest'
 
                         sh 'docker pull akeelquamina/call-routing-service:v1 || true'
-                        sh 'docker build -t akeelquamina/call-routing-service:latest'
+                        sh 'docker buildx build -t akeelquamina/call-routing-service:latest'
                         sh 'docker push akeelquamina/call-routing-service:latest'
 
                         sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
-                        sh 'docker build -t akeelquamina/sms-notification-service:latest'
+                        sh 'docker buildx build -t akeelquamina/sms-notification-service:latest'
                         sh 'docker push akeelquamina/sms-notification-service:latest'
                     }
                 }
