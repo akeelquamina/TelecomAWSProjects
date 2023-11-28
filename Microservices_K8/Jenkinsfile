@@ -15,7 +15,7 @@ pipeline {
         stage('Pull and Build Docker Images') {
             steps {
                 script {
-                    // Pull and build Docker images for Microservice 1
+                    // Pull and build Docker images
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_USERNAME) {
                         sh 'docker pull akeelquamina/billing-service:v1|| true' // Pull if exists or ignore error
                         sh 'docker build -t akeelquamina/billing-service:latest ./billing-service'
