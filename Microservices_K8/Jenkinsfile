@@ -19,8 +19,8 @@ pipeline {
                         // Pull and build Docker images using Buildx
                         sh 'docker buildx create --use'
                         sh 'docker pull akeelquamina/billing-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/billing-service:latest'
-                        sh 'docker push akeelquamina/billing-service:latest'
+                        sh 'docker buildx build -t akeelquamina/billing-service:v1'
+                        sh 'docker push akeelquamina/billing-service:v1'
 
                         sh 'docker pull akeelquamina/call-routing-service:v1 || true'
                         sh 'docker buildx build -t akeelquamina/call-routing-service:latest --platform linux/amd64,linux/arm64'
