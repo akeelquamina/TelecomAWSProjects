@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_USERNAME = credentials('DockerHub_Connection')
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -8,14 +12,46 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Pull and Build Docker Images') {
             steps {
                 script {
-                    // Build and push Docker image to DockerHub
-                    docker.build("akeelquamina/sms-notification-service:v1")
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
-                        docker.image("akeelquamina/sms-notification-service:v1").push()
+                    // Pull and build Docker images for Microservice 1
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_USERNAME) {
+                        sh 'docker pull akeelquamina/billing-service:v1|| true' // Pull if exists or ignore error
+                        sh 'docker build -t akeelquamina/billing-service:latest ./billing-service'
+                        sh 'docker push your-dockerhub-username/microservice1:latest'
                     }
+
+                    
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_USERNAME) {
+                        sh 'docker pull akeelquamina/call-routing-service:v1 || true'
+                        sh 'docker build -t akeelquamina/call-routing-service:latest ./call-routing-service'
+                        sh 'docker push akeelquamina/call-routing-service:latest'
+                    }
+
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_USERNAME) {
+                        sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
+                        sh 'docker build -t akeelquamina/sms-notification-service:latest ./sms-notification-service'
+                        sh 'docker push akeelquamina/sms-notification-service:latest'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    def kubeconfig = readFile('path/to/your/kubeconfig') // Provide the path to your kubeconfig file
+
+                    // Apply Kubernetes manifests for all three microservices
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service/kubernetes/"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f call-routing-service/kubernetes/"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f sms-notification-service/kubernetes/"
+
+                    // Wait for the deployment to complete for all three microservices
+                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment billing-service-deployment"
+                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment call-routing-service-deployment"
+                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment sms-notfication-service-deployment"
                 }
             }
         }
