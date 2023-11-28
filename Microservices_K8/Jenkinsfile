@@ -20,7 +20,7 @@ pipeline {
                         sh 'docker buildx create --use'
                         sh 'docker pull akeelquamina/billing-service:v1 || true'
                         sh 'docker buildx build -t akeelquamina/billing-service:latest ./Microservices_K8/billing-service'
-                        sh 'docker push akeelquamina/billing-service:v1'
+                        sh 'docker push akeelquamina/billing-service:latest'
 
                         sh 'docker pull akeelquamina/call-routing-service:v1 || true'
                         sh 'docker buildx build -t akeelquamina/call-routing-service:latest ./Microservices_K8/call-routing-service'
