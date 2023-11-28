@@ -19,15 +19,15 @@ pipeline {
                         // Pull and build Docker images using Buildx
                         sh 'docker buildx create --use'
                         sh 'docker pull akeelquamina/billing-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/billing-service:latest ./billing-service'
+                        sh 'docker buildx build -t akeelquamina/billing-service:latest'
                         sh 'docker push akeelquamina/billing-service:latest'
 
                         sh 'docker pull akeelquamina/call-routing-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/call-routing-service:latest ./call-routing-service'
+                        sh 'docker buildx build -t akeelquamina/call-routing-service:latest'
                         sh 'docker push akeelquamina/call-routing-service:latest'
 
                         sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/sms-notification-service:latest ./sms-notification-service'
+                        sh 'docker buildx build -t akeelquamina/sms-notification-service:latest'
                         sh 'docker push akeelquamina/sms-notification-service:latest'
                     }
                 }
