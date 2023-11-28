@@ -16,17 +16,18 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DockerHub_Connection', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                        // Pull and build Docker images
+                        // Pull and build Docker images using Buildx
+                        sh 'docker buildx create --use'
                         sh 'docker pull akeelquamina/billing-service:v1 || true'
-                        sh 'docker buildx -t akeelquamina/billing-service:latest'
+                        sh 'docker buildx build -t akeelquamina/billing-service:latest ./billing-service'
                         sh 'docker push akeelquamina/billing-service:latest'
 
                         sh 'docker pull akeelquamina/call-routing-service:v1 || true'
-                        sh 'docker buildx -t akeelquamina/call-routing-service:latest'
+                        sh 'docker buildx build -t akeelquamina/call-routing-service:latest ./call-routing-service'
                         sh 'docker push akeelquamina/call-routing-service:latest'
 
                         sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
-                        sh 'docker buildx -t akeelquamina/sms-notification-service:latest'
+                        sh 'docker buildx build -t akeelquamina/sms-notification-service:latest ./sms-notification-service'
                         sh 'docker push akeelquamina/sms-notification-service:latest'
                     }
                 }
@@ -39,9 +40,9 @@ pipeline {
                     def kubeconfig = readFile('/root/.kube/config') // Provide the path to your kubeconfig file
 
                     // Apply Kubernetes manifests for all three microservices
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service"
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f call-routing-service"
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f sms-notification-service"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service/kubernetes/"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f call-routing-service/kubernetes/"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f sms-notification-service/kubernetes/"
 
                     // Wait for the deployment to complete for all three microservices
                     sh "kubectl --kubeconfig=$kubeconfig rollout status deployment billing-service-deployment"
