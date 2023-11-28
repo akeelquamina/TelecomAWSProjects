@@ -15,21 +15,16 @@ pipeline {
         stage('Pull and Build Docker Images') {
             steps {
                 script {
-                    // Pull and build Docker images
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_USERNAME) {
-                        sh 'docker pull akeelquamina/billing-service:v1|| true' // Pull if exists or ignore error
+                    withCredentials([usernamePassword(credentialsId: 'DockerHub_Connection', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        // Pull and build Docker images
+                        sh 'docker pull akeelquamina/billing-service:v1 || true'
                         sh 'docker build -t akeelquamina/billing-service:latest ./billing-service'
-                        sh 'docker push your-dockerhub-username/microservice1:latest'
-                    }
+                        sh 'docker push akeelquamina/billing-service:latest'
 
-                    
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_USERNAME) {
                         sh 'docker pull akeelquamina/call-routing-service:v1 || true'
                         sh 'docker build -t akeelquamina/call-routing-service:latest ./call-routing-service'
                         sh 'docker push akeelquamina/call-routing-service:latest'
-                    }
 
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_USERNAME) {
                         sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
                         sh 'docker build -t akeelquamina/sms-notification-service:latest ./sms-notification-service'
                         sh 'docker push akeelquamina/sms-notification-service:latest'
@@ -51,7 +46,7 @@ pipeline {
                     // Wait for the deployment to complete for all three microservices
                     sh "kubectl --kubeconfig=$kubeconfig rollout status deployment billing-service-deployment"
                     sh "kubectl --kubeconfig=$kubeconfig rollout status deployment call-routing-service-deployment"
-                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment sms-notfication-service-deployment"
+                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment sms-notification-service-deployment"
                 }
             }
         }
