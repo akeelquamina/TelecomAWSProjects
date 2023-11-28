@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    // Build and push Docker image to DockerHub
+                    docker.build("akeelquamina/sms-notification-service:v1")
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
+                        docker.image("akeelquamina/sms-notification-service:v1").push()
+                    }
+                }
+            }
+        }
+    }
+}
