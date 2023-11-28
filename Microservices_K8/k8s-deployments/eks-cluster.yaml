@@ -12,6 +12,6 @@ nodeGroups:
     maxSize: 2
     desiredCapacity: 2
     volumeSize: 20
-    amiFamily: AmazonLinux2
+    amiFamily: AmazonLinux2023
     tags:
       nodegroup-type: "worker"
