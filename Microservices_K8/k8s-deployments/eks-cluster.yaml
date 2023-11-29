@@ -10,10 +10,10 @@ vpc:
   cidr: 172.20.0.0/16
   subnets:
     public:
-      us-east-2a: 172.20.32.0/19	
-      us-east-2b: 172.20.64.0/19
+      us-east-2a: 172.20.0.0/19
+      us-east-2b: 172.20.32.0/19
     private:
-      us-east-2a: 172.20.128.0/19
+      us-east-2a: 172.20.64.0/19
       us-east-2b: 172.20.96.0/19
 
 availabilityZones: ["us-east-2a", "us-east-2b"]
