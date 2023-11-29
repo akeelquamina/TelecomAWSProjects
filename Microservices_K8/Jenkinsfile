@@ -42,9 +42,9 @@ pipeline {
                     def kubeconfig = readFile '/var/lib/jenkins/.kube/config' // Provide the path to your kubeconfig file
 
                     // Apply Kubernetes manifests for all three microservices
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service/kubernetes/"
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f call-routing-service/kubernetes/"
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f sms-notification-service/kubernetes/"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f call-routing-service"
+                    sh "kubectl --kubeconfig=$kubeconfig apply -f sms-notification-service"
 
                     // Wait for the deployment to complete for all three microservices
                     sh "kubectl --kubeconfig=$kubeconfig rollout status deployment billing-service-deployment"
