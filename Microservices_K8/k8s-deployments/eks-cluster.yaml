@@ -21,3 +21,6 @@ nodeGroups:
     amiFamily: AmazonLinux2
     tags:
       nodegroup-type: "worker"
+    subnets: 
+      - subnet-0b267b7f2a11082ab 
+      - subnet-09b64bf069a48fbe7
