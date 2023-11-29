@@ -29,7 +29,7 @@ pipeline {
                         sh 'docker push akeelquamina/call-routing-service:v1'
 
                         sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/sms-notification-service:v1 ./Microservices_K8/sms-notification-service'
+                        sh 'docker buildx build -t akeelquamina/sms-notification-service:v1 ./Microservices_K8/SMS-Notification-service'
                         sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
                         sh 'docker push akeelquamina/sms-notification-service:v1'
                     }
