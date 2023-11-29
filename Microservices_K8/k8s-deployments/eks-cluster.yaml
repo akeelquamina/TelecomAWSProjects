@@ -34,3 +34,10 @@ nodeGroups:
     amiFamily: AmazonLinux2
     tags:
       nodegroup-type: "worker"
+    iam:
+      withAddonPolicies:
+        imageBuilder: true
+      attachPolicyARNs:
+        - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+        - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+        - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
