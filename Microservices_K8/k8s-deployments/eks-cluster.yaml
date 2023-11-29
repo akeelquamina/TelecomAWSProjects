@@ -6,27 +6,10 @@ metadata:
   region: us-east-2
 
 vpc:
+  id: your-vpc-id
   cidr: 172.20.0.0/16
-  subnets:
-    publicSubnet1:
-      cidr: 172.20.1.0/24
-      availabilityZone: us-east-2a
-      mapPublicIpOnLaunch: true
 
-    publicSubnet2:
-      cidr: 172.20.2.0/24
-      availabilityZone: us-east-2b
-      mapPublicIpOnLaunch: true
-
-    privateSubnet1:
-      cidr: 172.20.3.0/24
-      availabilityZone: us-east-2a
-      mapPublicIpOnLaunch: false
-
-    privateSubnet2:
-      cidr: 172.20.4.0/24
-      availabilityZone: us-east-2b
-      mapPublicIpOnLaunch: false
+availabilityZones: ["us-east-2a", "us-east-2b"]
 
 nodeGroups:
   - name: tas-nodegroup
@@ -38,3 +21,8 @@ nodeGroups:
     amiFamily: AmazonLinux2
     tags:
       nodegroup-type: "worker"
+    subnets:
+      - subnet-0b267b7f2a11082ab  
+      - subnet-0c719827aa42b4461
+      - subnet-09b64bf069a48fbe7
+      - subnet-04f7512d1213b94d9
