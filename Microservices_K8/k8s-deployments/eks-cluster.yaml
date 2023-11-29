@@ -8,6 +8,8 @@ metadata:
 vpc:
   id: "vpc-0eb93143d766ebcf1"
 
+availabilityZones: ["us-east-2a", "us-east-2b"]
+
 nodeGroups:
   - name: tas-nodegroup
     instanceType: t3.small
