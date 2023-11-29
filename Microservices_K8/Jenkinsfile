@@ -39,7 +39,11 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 script {
-                    def kubeconfig = readFile('/home/ec2-user/.kube/config') // Provide the path to your kubeconfig file
+                    def kubeconfig = readFile '/home/ec2-user/.kube/config' // Provide the path to your kubeconfig file
+
+                    // Print information about the kubeconfig file
+                    sh "ls -l $kubeconfigPath"
+                    sh "cat $kubeconfigPath"
 
                     // Apply Kubernetes manifests for all three microservices
                     sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service/kubernetes/"
