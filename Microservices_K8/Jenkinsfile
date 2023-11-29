@@ -39,7 +39,7 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 script {
-                    def kubeconfig = readFile '/root/.kube/config' // Provide the path to your kubeconfig file
+                    def kubeconfig = readFile '/var/lib/jenkins/.kube/config' // Provide the path to your kubeconfig file
 
                     // Print information about the kubeconfig file
                     sh "ls -l $kubeconfigPath"
