@@ -16,21 +16,22 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DockerHub_Connection', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                        // Pull and build Docker images using Buildx
-                        sh 'docker pull akeelquamina/billing-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/billing-service:v1 ./Microservices_K8/billing-service'
-                        sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                        sh 'docker push akeelquamina/billing-service:v1'
+                
+                        def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
 
-                        sh 'docker pull akeelquamina/call-routing-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/call-routing-service:v1 ./Microservices_K8/call-routing-service'
-                        sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                        sh 'docker push akeelquamina/call-routing-service:v1'
+                        // Iterate over services
+                        services.each { service ->
+                            def imageTag = "v1"
+                            def fullImageName = "akeelquamina/${service}:${imageTag}"
 
-                        sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
-                        sh 'docker buildx build -t akeelquamina/sms-notification-service:v1 ./Microservices_K8/SMS-Notification-service'
-                        sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                        sh 'docker push akeelquamina/sms-notification-service:v1'
+                            // Pull Docker image or ignore failure
+                            sh "docker pull ${fullImageName} || true"
+
+                            // Build and push Docker image
+                            sh "docker buildx build -t ${fullImageName} ./Microservices_K8/${service}"
+                            sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                            sh "docker push ${fullImageName}"
+                        }
                     }
                 }
             }
