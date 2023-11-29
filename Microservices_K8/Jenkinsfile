@@ -42,8 +42,8 @@ pipeline {
                     def kubeconfig = readFile '/var/lib/jenkins/.kube/config' // Provide the path to your kubeconfig file
 
                     // Print information about the kubeconfig file
-                    sh "ls -l $kubeconfigPath"
-                    sh "cat $kubeconfigPath"
+                    sh "ls -l $kubeconfig"
+                    sh "cat $kubeconfig"
 
                     // Apply Kubernetes manifests for all three microservices
                     sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service/kubernetes/"
