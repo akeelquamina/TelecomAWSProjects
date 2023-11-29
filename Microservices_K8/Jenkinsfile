@@ -16,7 +16,6 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DockerHub_Connection', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                
                         def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
 
                         // Iterate over services
@@ -40,17 +39,24 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 script {
-                    def kubeconfig = readFile '/var/lib/jenkins/.kube/config' // Provide the path to your kubeconfig file
+                    // Define AWS EKS cluster details
+                    def awsRegion = 'us-east-2'
+                    def eksClusterName = 'QuamTel'
+
+                    // AWS CLI command to update kubeconfig with EKS cluster details
+                    sh "aws eks --region ${awsRegion} update-kubeconfig --name ${eksClusterName}"
 
                     // Apply Kubernetes manifests for all three microservices
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f billing-service"
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f call-routing-service"
-                    sh "kubectl --kubeconfig=$kubeconfig apply -f sms-notification-service"
+                    def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
+
+                    services.each { service ->
+                        sh "kubectl apply -f Microservices_K8/${service}/k8s-manifest.yaml"
+                    }
 
                     // Wait for the deployment to complete for all three microservices
-                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment billing-service-deployment"
-                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment call-routing-service-deployment"
-                    sh "kubectl --kubeconfig=$kubeconfig rollout status deployment sms-notification-service-deployment"
+                    services.each { service ->
+                        sh "kubectl rollout status deployment ${service}-deployment"
+                    }
                 }
             }
         }
