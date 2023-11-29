@@ -7,6 +7,7 @@ metadata:
 
 vpc:
   id: "vpc-0eb93143d766ebcf1"
+  cidr: 172.20.0.0/16
 
 availabilityZones: ["us-east-2a", "us-east-2b"]
 
