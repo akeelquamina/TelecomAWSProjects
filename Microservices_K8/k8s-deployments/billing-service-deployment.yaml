@@ -17,3 +17,10 @@ spec:
           image: akeelquamina/billing-service:v1
           ports:
             - containerPort: 5001
+          resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
