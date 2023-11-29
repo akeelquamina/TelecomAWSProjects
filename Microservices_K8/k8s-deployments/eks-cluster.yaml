@@ -4,17 +4,27 @@ kind: ClusterConfig
 metadata:
   name: QuamTel
   region: us-east-2
+  version: 1.28
 
 vpc:
-  id: vpc-0eb93143d766ebcf1
-  cidr: 172.20.0.0/16
+  id: "vpc-0eb93143d766ebcf1"
+  cidr: "172.20.0.0/16"
   subnets:
     private:
-      us-east-2a: "172.20.64.0/19"
-      us-east-2b: "172.20.96.0/19"
-    public:
-      us-east-2a: "172.20.0.0/19"
-      us-east-2b: "172.20.32.0/19"
+      us-east-2a:
+        id: "subnet-0c719827aa42b4461"
+        cidr: "172.20.64.0/19" 
+
+      us-east-2b:
+        id: "subnet-04f7512d1213b94d9"
+        cidr: "172.20.96.0/19"  
+    public: 
+      us-east-2a:
+        id: "subnet-0b267b7f2a11082ab"
+        cidr: "172.20.0.0/19"   
+      us-east-2b:
+        id: "subnet-09b64bf069a48fbe7"
+        cidr: "172.20.32.0/19"
 
 availabilityZones: ["us-east-2a", "us-east-2b"]
 
