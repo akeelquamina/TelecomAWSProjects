@@ -4,7 +4,6 @@ kind: ClusterConfig
 metadata:
   name: QuamTel
   region: us-east-2
-  version: "1.28"
 
 vpc:
   id: "vpc-0eb93143d766ebcf1"
@@ -25,6 +24,8 @@ vpc:
       us-east-2b:
         id: "subnet-09b64bf069a48fbe7"
         cidr: "172.20.32.0/19"
+
+availabilityZones: ["us-east-2a", "us-east-2b"]
 
 nodeGroups:
   - name: tas-nodegroup
