@@ -20,17 +20,17 @@ pipeline {
                         sh 'docker pull akeelquamina/billing-service:v1 || true'
                         sh 'docker buildx build -t akeelquamina/billing-service:v1 ./Microservices_K8/billing-service'
                         sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                        sh 'docker push akeelquamina/billing-service:v2'
+                        sh 'docker push akeelquamina/billing-service:v1'
 
                         sh 'docker pull akeelquamina/call-routing-service:v1 || true'
                         sh 'docker buildx build -t akeelquamina/call-routing-service:v1 ./Microservices_K8/call-routing-service'
                         sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                        sh 'docker push akeelquamina/call-routing-service:v2'
+                        sh 'docker push akeelquamina/call-routing-service:v1'
 
                         sh 'docker pull akeelquamina/sms-notification-service:v1 || true'
                         sh 'docker buildx build -t akeelquamina/sms-notification-service:v1 ./Microservices_K8/SMS-Notification-service'
                         sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                        sh 'docker push akeelquamina/sms-notification-service:v2'
+                        sh 'docker push akeelquamina/sms-notification-service:v1'
                     }
                 }
             }
