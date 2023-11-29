@@ -25,7 +25,7 @@ vpc:
         cidr: "172.20.64.0/19"
 
 nodeGroups:
-  - name: tas-nodegroup
+  - name: TAS
     instanceType: t3.small
     minSize: 1
     maxSize: 2
