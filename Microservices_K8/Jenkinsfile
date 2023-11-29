@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         DOCKERHUB_USERNAME = credentials('DockerHub_Connection')
+        AWS_ACCESS_KEY_ID     = credentials('AWS_Access_Key_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_Secret_Access_Key')
     }
 
     stages {
@@ -15,7 +17,10 @@ pipeline {
         stage('Pull and Build Docker Images') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'DockerHub_Connection', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'DockerHub_Connection', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'),
+                                     string(credentialsId: 'AWS_Access_Key_ID', variable: 'AWS_ACCESS_KEY_ID'),
+                                     string(credentialsId: 'AWS_Secret_Access_Key', variable: 'AWS_SECRET_ACCESS_KEY')]) {
+
                         def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
 
                         // Iterate over services
@@ -42,6 +47,10 @@ pipeline {
                     // Define AWS EKS cluster details
                     def awsRegion = 'us-east-2'
                     def eksClusterName = 'QuamTel'
+
+                    // Configure AWS credentials
+                    sh "aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}"
+                    sh "aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}"
 
                     // AWS CLI command to update kubeconfig with EKS cluster details
                     sh "aws eks --region ${awsRegion} update-kubeconfig --name ${eksClusterName}"
