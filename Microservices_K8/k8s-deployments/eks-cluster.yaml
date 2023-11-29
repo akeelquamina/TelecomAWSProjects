@@ -8,6 +8,16 @@ metadata:
 vpc:
   id: vpc-0eb93143d766ebcf1
   cidr: 172.20.0.0/16
+  private:
+      us-west-2a:
+          id: "172.20.64.0/19"
+      us-west-2b:
+          id: "172.20.96.0/19"
+  public:
+      us-west-2a:
+          id: "172.20.0.0/19"
+      us-west-2b:
+          id: "172.20.32.0/19"
 
 availabilityZones: ["us-east-2a", "us-east-2b"]
 
