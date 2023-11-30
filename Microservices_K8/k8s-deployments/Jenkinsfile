@@ -5,6 +5,8 @@ pipeline {
         DOCKERHUB_USERNAME = credentials('DockerHub_Connection')
         AWS_ACCESS_KEY_ID     = credentials('AWS_Access_Key_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_Secret_Access_Key')
+        AWS_DEFAULT_REGION    = 'us-east-2'
+        EKS_CLUSTER_NAME      = 'QuamTel'
     }
 
     stages {
@@ -41,19 +43,17 @@ pipeline {
             }
         }
 
-        stage('Deploy to EKS') {
+        stage('Create EKS Cluster and Deploy to EKS') {
             steps {
                 script {
-                    // Define AWS EKS cluster details
-                    def awsRegion = 'us-east-2'
-                    def eksClusterName = 'QuamTel'
+                    // Create EKS Cluster
+                    sh "eksctl create cluster -f path/to/your/eks-cluster.yaml"
 
-                    // Configure AWS credentials
-                    sh "aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}"
-                    sh "aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}"
+                    // Wait for the cluster to become ready
+                    sh "eksctl utils wait --region=${AWS_DEFAULT_REGION} --for=cluster.active=${EKS_CLUSTER_NAME}"
 
-                    // AWS CLI command to update kubeconfig with EKS cluster details
-                    sh "aws eks --region ${awsRegion} update-kubeconfig --name ${eksClusterName}"
+                    // Update kubeconfig
+                    sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}"
 
                     // Apply Kubernetes manifests for all three microservices
                     def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
