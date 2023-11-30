@@ -41,8 +41,11 @@ nodeGroups:
         - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
         - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
         - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-        
-postHooks:
-  - name: WaitForNodes
-    commands:
-      - "kubectl wait --for=condition=Ready node --all --timeout=10m"
+
+postInstall:
+  files:
+    - source: ./post-creation.sh
+      dest: /tmp/post-creation.sh
+      mode: 0755
+  commands:
+    - /tmp/post-creation.sh
