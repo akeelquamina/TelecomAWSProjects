@@ -23,12 +23,13 @@ vpc:
       us-east-2b:
         id: "subnet-09b64bf069a48fbe7"
         cidr: "172.20.64.0/19"
+privateAccess: true
 
 nodeGroups:
   - name: TAS
     instanceType: t3.small
     minSize: 1
-    maxSize: 2
+    maxSize: 3
     desiredCapacity: 2
     volumeSize: 20
     amiFamily: AmazonLinux2
