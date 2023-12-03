@@ -1,44 +1,42 @@
 ---
 apiVersion: eksctl.io/v1alpha5
-eksclusterconfig:
-  privateAccess: true
 kind: ClusterConfig
 metadata:
   name: QuamTel
 nodeGroups:
-- amiFamily: AmazonLinux2
+- name: TAS
+  instanceType: t3.small
+  minSize: 1
+  maxSize: 3
   desiredCapacity: 2
+  volumeSize: 20
+  amiFamily: AmazonLinux2
+  tags:
+    nodegroup-type: "worker"
   iam:
-    attachPolicyARNs:
-    - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
-    - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
-    - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
     withAddonPolicies:
       imageBuilder: true
-  instanceType: t3.small
-  maxSize: 3
-  minSize: 1
-  name: TAS
-  tags:
-    nodegroup-type: worker
-  volumeSize: 20
-resourcesvpcconfig:
+    attachPolicyARNs:
+      - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+      - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+      - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+resourcesVpcConfig:
   endpointPrivateAccess: true
 vpc:
-  cidr: 172.20.0.0/16
-  id: vpc-0eb93143d766ebcf1
+  id: "vpc-0eb93143d766ebcf1"
+  cidr: "172.20.0.0/16"
   subnets:
     private:
       us-east-2a:
-        cidr: 172.20.128.0/19
-        id: subnet-0c719827aa42b4461
+        id: "subnet-0c719827aa42b4461"
+        cidr: "172.20.128.0/19"
       us-east-2b:
-        cidr: 172.20.96.0/19
-        id: subnet-04f7512d1213b94d9
+        id: "subnet-04f7512d1213b94d9"
+        cidr: "172.20.96.0/19"
     public:
       us-east-2a:
-        cidr: 172.20.32.0/19
-        id: subnet-0b267b7f2a11082ab
+        id: "subnet-0b267b7f2a11082ab"
+        cidr: "172.20.32.0/19"
       us-east-2b:
-        cidr: 172.20.64.0/19
-        id: subnet-09b64bf069a48fbe7
+        id: "subnet-09b64bf069a48fbe7"
+        cidr: "172.20.64.0/19"
