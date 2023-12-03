@@ -35,9 +35,11 @@ vpc:
       us-east-2a:
         cidr: 172.20.128.0/19
         id: subnet-0c719827aa42b4461
+        natGateway: true
       us-east-2b:
         cidr: 172.20.96.0/19
         id: subnet-04f7512d1213b94d9
+        natGateway: true 
     public:
       us-east-2a:
         cidr: 172.20.32.0/19
