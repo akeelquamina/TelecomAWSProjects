@@ -26,7 +26,6 @@ vpc:
 
 eksClusterConfig:
   privateAccess: true
-  publicAccess: true  # Ensure publicAccess is set to true as well for public API server access
 
 nodeGroups:
   - name: TAS
