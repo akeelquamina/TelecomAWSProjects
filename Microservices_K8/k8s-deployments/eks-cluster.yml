@@ -17,11 +17,10 @@ nodeGroups:
   maxSize: 3
   minSize: 1
   name: TAS
+  privateNetworking: true
   tags:
     nodegroup-type: worker
   volumeSize: 20
-resourcesVpcConfig:
-  endpointPrivateAccess: true
 vpc:
   cidr: 172.20.0.0/16
   id: vpc-0eb93143d766ebcf1
