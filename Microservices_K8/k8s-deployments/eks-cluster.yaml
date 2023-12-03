@@ -23,7 +23,8 @@ vpc:
       us-east-2b:
         id: "subnet-09b64bf069a48fbe7"
         cidr: "172.20.64.0/19"
-privateAccess: true
+eksClusterConfig:
+  privateAccess: true
 
 nodeGroups:
   - name: TAS
