@@ -31,7 +31,7 @@ vpc:
     private:
       us-east-2a:
         cidr: 172.20.128.0/19
-        id: subnet-0c719827aa42b4461a
+        id: subnet-0c719827aa42b4461
       us-east-2b:
         cidr: 172.20.96.0/19
         id: subnet-04f7512d1213b94d9
