@@ -24,20 +24,26 @@ vpc:
         id: "subnet-09b64bf069a48fbe7"
         cidr: "172.20.64.0/19"
 
-nodeGroups:
-  - name: TAS
-    instanceType: t3.small
-    minSize: 1
-    maxSize: 3
-    desiredCapacity: 2
-    volumeSize: 20
-    amiFamily: AmazonLinux2
-    tags:
-      nodegroup-type: "worker"
-    iam:
-      withAddonPolicies:
-        imageBuilder: true
-      attachPolicyARNs:
-        - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-        - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-        - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  eksClusterConfig:
+    privateAccess: true
+
+  nodeGroups:
+    - name: TAS
+      instanceType: t3.small
+      minSize: 1
+      maxSize: 3
+      desiredCapacity: 2
+      volumeSize: 20
+      amiFamily: AmazonLinux2
+      tags:
+        nodegroup-type: "worker"
+      iam:
+        withAddonPolicies:
+          imageBuilder: true
+        attachPolicyARNs:
+          - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+          - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+          - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+          
+    resourcesVpcConfig:
+      endpointPrivateAccess: true
