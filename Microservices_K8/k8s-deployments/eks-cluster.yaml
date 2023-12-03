@@ -23,8 +23,10 @@ vpc:
       us-east-2b:
         id: "subnet-09b64bf069a48fbe7"
         cidr: "172.20.64.0/19"
+
 eksClusterConfig:
   privateAccess: true
+  publicAccess: true  # Ensure publicAccess is set to true as well for public API server access
 
 nodeGroups:
   - name: TAS
