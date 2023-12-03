@@ -24,7 +24,7 @@ vpc:
         id: "subnet-09b64bf069a48fbe7"
         cidr: "172.20.64.0/19"
 
-eksClusterConfig:
+eksclusterconfig:
   privateAccess: true
 
 nodeGroups:
@@ -45,5 +45,5 @@ nodeGroups:
         - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
         - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 
-resourcesVpcConfig:
+resourcesvpcconfig:
   endpointPrivateAccess: true
