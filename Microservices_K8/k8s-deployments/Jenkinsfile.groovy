@@ -46,6 +46,8 @@ pipeline {
         stage('Create EKS Cluster and Deploy to EKS') {
             steps {
                 script {
+                    // Read YAML file
+                    def eksConfig = readYaml file: 'Microservices_K8/k8s-deployments/eks-cluster.yaml'
                     // Create EKS Cluster
                     sh "eksctl create cluster -f Microservices_K8/k8s-deployments/eks-cluster.yaml"
 
