@@ -44,3 +44,6 @@ vpc:
           - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
           - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
           - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+
+resourcesVpcConfig:
+      endpointPrivateAccess: true
