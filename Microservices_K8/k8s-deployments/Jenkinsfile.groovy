@@ -47,9 +47,10 @@ pipeline {
             steps {
                 script {
                     // Read YAML file
-                    def eksConfig = readYaml file: 'Microservices_K8/k8s-deployments/eks-cluster.yaml'
+                    def eksConfig = readYaml file: "Microservices_K8/k8s-deployments/eks-cluster.yaml"
+                    
                     // Create EKS Cluster
-                    sh 'eksctl create cluster -f Microservices_K8/k8s-deployments/eks-cluster.yaml'
+                    sh "eksctl create cluster -f Microservices_K8/k8s-deployments/eks-cluster.yaml"
 
                     // Wait for the cluster to become ready
                     sh "eksctl utils wait --region=${AWS_DEFAULT_REGION} --for=cluster.active=${EKS_CLUSTER_NAME}"
