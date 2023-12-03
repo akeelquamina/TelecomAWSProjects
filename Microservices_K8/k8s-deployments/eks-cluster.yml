@@ -1,27 +1,29 @@
----
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
+
 metadata:
   name: QuamTel
   region: us-east-2
+
 nodeGroups:
-- amiFamily: AmazonLinux2
-  desiredCapacity: 2
-  iam:
-    attachPolicyARNs:
-    - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
-    - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
-    - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
-    withAddonPolicies:
-      imageBuilder: true
-  instanceType: t3.small
-  maxSize: 3
-  minSize: 1
-  name: TAS
-  privateNetworking: true
-  tags:
-    nodegroup-type: worker
-  volumeSize: 20
+  - name: TAS
+    instanceType: t3.small
+    desiredCapacity: 2
+    maxSize: 3
+    minSize: 1
+    volumeSize: 20
+    amiFamily: AmazonLinux2
+    privateNetworking: true
+    tags:
+      nodegroup-type: worker
+    iam:
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+      withAddonPolicies:
+        imageBuilder: true
+
 vpc:
   cidr: 172.20.0.0/16
   id: vpc-0eb93143d766ebcf1
