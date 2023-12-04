@@ -17,18 +17,6 @@ pipeline {
             }
         }
 
-        stage('Retrieve EKS Cluster Security Group ID') {
-            steps {
-                script {
-                    // Retrieve EKS Cluster Security Group ID
-                    def eksClusterSGId = sh(script: "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION} --query 'cluster.resourcesVpcConfig.clusterSecurityGroupIds[0]' --output text", returnStdout: true).trim()
-
-                    // Update Jenkins Security Group Inbound Rules
-                    sh "aws ec2 authorize-security-group-ingress --group-id ${JENKINS_SECURITY_GROUP_ID} --protocol tcp --port 6443 --source ${eksClusterSGId}"
-                }
-            }
-        }
-
         stage('Create EKS Cluster') {
             steps {
                 script {
@@ -40,6 +28,12 @@ pipeline {
 
                     // Wait for the cluster to become ready
                     sh "eksctl utils wait --region=${AWS_DEFAULT_REGION} --for=cluster.active=${EKS_CLUSTER_NAME}"
+
+                    // Retrieve EKS Cluster Security Group ID
+                    def eksClusterSGId = sh(script: "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION} --query 'cluster.resourcesVpcConfig.clusterSecurityGroupIds[0]' --output text", returnStdout: true).trim()
+
+                    // Update Jenkins Security Group Inbound Rules
+                    sh "aws ec2 authorize-security-group-ingress --group-id ${JENKINS_SECURITY_GROUP_ID} --protocol tcp --port 6443 --source ${eksClusterSGId}"
 
                     // Update kubeconfig
                     sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}"
