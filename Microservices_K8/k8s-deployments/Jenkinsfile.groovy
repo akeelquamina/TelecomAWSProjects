@@ -7,6 +7,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_Secret_Access_Key')
         AWS_DEFAULT_REGION    = 'us-east-2'
         EKS_CLUSTER_NAME      = 'QuamTel'
+        JENKINS_SECURITY_GROUP_ID = 'Jenkins-SG'
     }
 
     stages {
@@ -16,15 +17,26 @@ pipeline {
             }
         }
 
-        stage('Create EKS Cluster and Update Security Group') {
+        stage('Retrieve EKS Cluster Security Group ID') {
             steps {
                 script {
-                   
+                    // Retrieve EKS Cluster Security Group ID
+                    def eksClusterSGId = sh(script: "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION} --query 'cluster.resourcesVpcConfig.clusterSecurityGroupIds[0]' --output text", returnStdout: true).trim()
+
+                    // Update Jenkins Security Group Inbound Rules
+                    sh "aws ec2 authorize-security-group-ingress --group-id ${JENKINS_SECURITY_GROUP_ID} --protocol tcp --port 6443 --source ${eksClusterSGId}"
+                }
+            }
+        }
+
+        stage('Create EKS Cluster') {
+            steps {
+                script {
                     // Read YAML file
                     def eksConfig = readYaml file: "Microservices_K8/k8s-deployments/eks-cluster.yml"
 
-                    // Create EKS Cluster with the pre script
-                    sh "eksctl create cluster -f Microservices_K8/k8s-deployments/eks-cluster.yml --pre eksctl-pre-script.sh"
+                    // Create EKS Cluster
+                    sh "eksctl create cluster -f Microservices_K8/k8s-deployments/eks-cluster.yml"
 
                     // Wait for the cluster to become ready
                     sh "eksctl utils wait --region=${AWS_DEFAULT_REGION} --for=cluster.active=${EKS_CLUSTER_NAME}"
