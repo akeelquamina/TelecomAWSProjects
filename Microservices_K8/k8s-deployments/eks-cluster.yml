@@ -28,11 +28,6 @@ vpc:
   cidr: 172.20.0.0/16
   id: vpc-0dd90be52a719e88e
   subnets:
-    private: 
-      zones:
-        - us-east-2a
-        - us-east-2b
-    public:
-      zones:
-        - us-east-2a
-        - us-east-2b
+    zones:
+      - us-east-2a
+      - us-east-2b
