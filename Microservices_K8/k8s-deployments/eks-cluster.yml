@@ -1,4 +1,3 @@
----
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
@@ -14,7 +13,6 @@ nodeGroups:
     minSize: 1
     volumeSize: 20
     amiFamily: AmazonLinux2
-    privateNetworking: true
     tags:
       nodegroup-type: worker
     iam:
@@ -29,21 +27,13 @@ vpc:
   clusterEndpoints:
     privateAccess: true
   cidr: 172.20.0.0/16
-  id: vpc-0eb93143d766ebcf1
+  id: vpc-0dd90be52a719e88e
   subnets:
-    private:
-      us-east-2a:
-        cidr: 172.20.128.0/19
-        id: subnet-0c719827aa42b4461
-        natGateway: true
-      us-east-2b:
-        cidr: 172.20.96.0/19
-        id: subnet-04f7512d1213b94d9
-        natGateway: true 
+    private: 
+      zones:
+        - us-east-2a
+        - us-east-2b
     public:
-      us-east-2a:
-        cidr: 172.20.32.0/19
-        id: subnet-0b267b7f2a11082ab
-      us-east-2b:
-        cidr: 172.20.64.0/19
-        id: subnet-09b64bf069a48fbe7
+      zones:
+        - us-east-2a
+        - us-east-2b
