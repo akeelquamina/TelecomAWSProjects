@@ -16,11 +16,8 @@ vpc:
     public:
       us-east-2a: { id: subnet-05932975c99209d15 }
       us-east-2b: { id: subnet-0fcb93f5ba8981de3 }
-  clusterEndpoints:
-    publicAccess: true
-    privateAccess: true
 
-nodeGroups:
+managedNodeGroups:
   - name: TAS
     instanceType: t3.small
     desiredCapacity: 2
