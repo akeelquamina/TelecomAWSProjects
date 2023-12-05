@@ -6,6 +6,13 @@ metadata:
   name: QuamTel
   region: us-east-2
 
+vpc:
+  cidr: 172.20.0.0/16
+  id: vpc-0dd90be52a719e88e
+  subnets:
+    - us-east-2a
+    - us-east-2b
+
 nodeGroups:
   - name: TAS
     instanceType: t3.small
@@ -23,10 +30,3 @@ nodeGroups:
         - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
       withAddonPolicies:
         imageBuilder: true
-
-vpc:
-  cidr: 172.20.0.0/16
-  id: vpc-0dd90be52a719e88e
-  subnets:
-    - us-east-2a
-    - us-east-2b
