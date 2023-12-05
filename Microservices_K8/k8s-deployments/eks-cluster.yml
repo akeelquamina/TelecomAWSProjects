@@ -9,9 +9,6 @@ metadata:
 vpc:
   cidr: 172.20.0.0/16
   id: vpc-0dd90be52a719e88e
-  subnets:
-    - us-east-2a
-    - us-east-2b
 
 nodeGroups:
   - name: TAS
@@ -21,6 +18,7 @@ nodeGroups:
     minSize: 1
     volumeSize: 20
     amiFamily: AmazonLinux2
+    privatenetworking: true
     tags:
       nodegroup-type: worker
     iam:
