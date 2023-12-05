@@ -15,7 +15,10 @@ vpc:
       us-east-2b: { id: subnet-075ad7dce3167e662 }
     public:
       us-east-2a: { id: subnet-05932975c99209d15 }
-      us-east-2b: { id: subnet-0fcb93f5ba8981de3 } 
+      us-east-2b: { id: subnet-0fcb93f5ba8981de3 }
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: true
 
 nodeGroups:
   - name: TAS
