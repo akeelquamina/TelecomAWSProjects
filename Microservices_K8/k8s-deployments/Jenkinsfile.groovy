@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     // CloudFormation Stack Creation
-                    sh "aws cloudformation create-stack --stack-name eks-cluster-stack --template-body file://eks-create.yaml --parameters ParameterKey=ClusterName,ParameterValue=${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}"
+                    sh "aws cloudformation create-stack --stack-name eks-cluster-stack --template-body file://eks-create.yml --parameters ParameterKey=ClusterName,ParameterValue=${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}"
                     sh "aws cloudformation wait stack-create-complete --stack-name eks-cluster-stack --region ${AWS_DEFAULT_REGION}"
 
                     // EKS Cluster Configuration
