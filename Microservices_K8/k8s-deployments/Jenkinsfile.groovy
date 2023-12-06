@@ -61,7 +61,7 @@ pipeline {
                     }
 
                     services.each { service ->
-                        sh "kubectl rollout status deployment ${service}-deployment"
+                        sh "kubectl rollout status deployment ${service}"
                     }
                 }
             }
