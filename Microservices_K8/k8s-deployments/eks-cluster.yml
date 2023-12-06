@@ -20,3 +20,21 @@ Resources:
           - subnet-05932975c99209d15
           - subnet-0fcb93f5ba8981de3
       Version: "1.26"
+
+  NodeGroup:
+    Type: "AWS::EKS::Nodegroup"
+    DependsOn: EKSCluster
+    Properties:
+      ClusterName: !Ref ClusterName
+      NodeRole: arn:aws:iam::522424656191:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
+      Subnets:
+        - subnet-0d65396d253631a43
+        - subnet-075ad7dce3167e662
+        - subnet-05932975c99209d15
+        - subnet-0fcb93f5ba8981de3
+      DesiredCapacity: 3  # Adjust the number based on your requirements
+      MaxCapacity: 5      # Adjust the number based on your requirements
+      MinCapacity: 1      # Adjust the number based on your requirements
+      DiskSize: 20        # Adjust the disk size based on your requirements
+      InstanceTypes:
+        - t3.small         # Adjust the instance type based on your requirements
