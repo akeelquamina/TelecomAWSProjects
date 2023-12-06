@@ -19,6 +19,15 @@ Resources:
             Principal:
               Service: "eks.amazonaws.com"
             Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "EKSClusterPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "eks:DescribeCluster"
+                Resource: "*"
 
   EKSCluster:
     Type: "AWS::EKS::Cluster"
@@ -42,10 +51,24 @@ Resources:
         Statement:
           - Effect: "Allow"
             Principal:
-              Service: 
+              Service:
                 - "eks-nodegroup.amazonaws.com"
                 - "ec2.amazonaws.com"
             Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "EKSNodegroupPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "eks:ListNodegroups"
+                  - "eks:CreateNodegroup"
+                  - "eks:UpdateNodegroupConfig"
+                  - "eks:DescribeNodegroup"
+                  - "autoscaling:DescribeAutoScalingGroups"
+                  - "autoscaling:DescribeLaunchConfigurations"
+                Resource: "*"
 
   NodeGroup:
     Type: "AWS::EKS::Nodegroup"
