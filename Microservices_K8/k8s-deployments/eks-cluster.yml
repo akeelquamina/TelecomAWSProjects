@@ -42,7 +42,9 @@ Resources:
         Statement:
           - Effect: "Allow"
             Principal:
-              Service: "eks-nodegroup.amazonaws.com"
+              Service: 
+                - "eks-nodegroup.amazonaws.com"
+                - "ec2.amazonaws.com"
             Action: "sts:AssumeRole"
 
   NodeGroup:
