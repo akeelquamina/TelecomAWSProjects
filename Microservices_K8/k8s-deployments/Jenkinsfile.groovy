@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     // CloudFormation Stack Creation
-                    sh "aws cloudformation create-stack --stack-name eks-cluster-stack --template-body file://Microservices_K8/k8s-deployments/eks-cluster.yml --region us-east-2"
+                    sh ""aws cloudformation create-stack --stack-name eks-cluster-stack --template-body file://Microservices_K8/k8s-deployments/eks-cluster.yml --parameters ParameterKey=ClusterName,ParameterValue=${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION} --capabilities CAPABILITY_NAMED_IAM"
                     sh "aws cloudformation wait stack-create-complete --stack-name eks-cluster-stack --region ${AWS_DEFAULT_REGION}"
 
                     // Update Jenkins Security Group Inbound Rules
