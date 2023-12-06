@@ -47,32 +47,19 @@ pipeline {
         stage('Create EKS Cluster') {
             steps {
                 script {
-                    // Read YAML file
-                    def eksConfig = readYaml file: "Microservices_K8/k8s-deployments/eks-cluster.yml"
+                    // CloudFormation Stack Creation
+                    sh "aws cloudformation create-stack --stack-name eks-cluster-stack --template-body file://eks-create.yaml --parameters ParameterKey=ClusterName,ParameterValue=${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}"
+                    sh "aws cloudformation wait stack-create-complete --stack-name eks-cluster-stack --region ${AWS_DEFAULT_REGION}"
 
-                    // Create EKS Cluster
-                    sh "eksctl create cluster -f Microservices_K8/k8s-deployments/eks-cluster.yml"
-
-                    // Wait for the cluster to become ready
-                    sh "eksctl utils wait --region=${AWS_DEFAULT_REGION} --for=cluster.active=${EKS_CLUSTER_NAME}"
-
-                    // Retrieve EKS Cluster Security Group ID
-                    def eksClusterSGId = sh(script: "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION} --query 'cluster.resourcesVpcConfig.clusterSecurityGroupIds[0]' --output text", returnStdout: true).trim()
-
-                    // Update Jenkins Security Group Inbound Rules
-                    sh "aws ec2 authorize-security-group-ingress --group-id ${JENKINS_SECURITY_GROUP_ID} --protocol tcp --port 6443 --source ${eksClusterSGId}"
-
-                    // Update kubeconfig
+                    // EKS Cluster Configuration
                     sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}"
 
-                    // Apply Kubernetes manifests for all three microservices
                     def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
 
                     services.each { service ->
                         sh "kubectl apply -f Microservices_K8/${service}/k8s-manifest.yaml"
                     }
 
-                    // Wait for the deployment to complete for all three microservices
                     services.each { service ->
                         sh "kubectl rollout status deployment ${service}-deployment"
                     }
