@@ -12,7 +12,7 @@ Resources:
     Type: "AWS::EKS::Cluster"
     Properties:
       Name: !Ref ClusterName
-      RoleArn: arn:aws:iam::522424656191:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
+      RoleArn: arn:aws:iam::522424656191:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
       ResourcesVpcConfig:
         SubnetIds:
           - subnet-0d65396d253631a43
@@ -26,16 +26,17 @@ Resources:
     DependsOn: EKSCluster
     Properties:
       ClusterName: !Ref ClusterName
-      NodegroupName: "TAS"
+      NodegroupName: "worker-node-group"  # Choose a name for your node group
       ScalingConfig:
-        DesiredSize: 3 
-        MaxSize: 5        
-        MinSize: 1        
-      DiskSize: 20        
+        DesiredSize: 3    # Adjust the number based on your requirements
+        MaxSize: 5        # Adjust the number based on your requirements
+        MinSize: 1        # Adjust the number based on your requirements
+      DiskSize: 20        # Adjust the disk size based on your requirements
       Subnets:
         - subnet-0d65396d253631a43
         - subnet-075ad7dce3167e662
         - subnet-05932975c99209d15
         - subnet-0fcb93f5ba8981de3
       InstanceTypes:
-        - t3.small       
+        - t3.small         # Adjust the instance type based on your requirements
+      NodeRole: "arn:aws:iam::522424656191:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup"
