@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "EKS Cluster Creation Stack"
+Description: "EKS Cluster and NodeGroup Creation Stack"
 
 Parameters:
   ClusterName:
@@ -8,6 +8,31 @@ Parameters:
     Default: "QuamTel"
 
 Resources:
+  EKSClusterRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "EKSClusterRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "eks.amazonaws.com"
+            Action: "sts:AssumeRole"
+
+  EKSCluster:
+    Type: "AWS::EKS::Cluster"
+    Properties:
+      Name: !Ref ClusterName
+      RoleArn: !GetAtt EKSClusterRole.Arn
+      ResourcesVpcConfig:
+        SubnetIds:
+          - subnet-0d65396d253631a43
+          - subnet-075ad7dce3167e662
+          - subnet-05932975c99209d15
+          - subnet-0fcb93f5ba8981de3
+      Version: "1.26"
+
   EKSNodegroupRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -17,23 +42,8 @@ Resources:
         Statement:
           - Effect: "Allow"
             Principal:
-              Service:
-                - "eks.amazonaws.com"
-                - "eks-nodegroup.amazonaws.com"
+              Service: "eks-nodegroup.amazonaws.com"
             Action: "sts:AssumeRole"
-
-  EKSCluster:
-    Type: "AWS::EKS::Cluster"
-    Properties:
-      Name: !Ref ClusterName
-      RoleArn: arn:aws:iam::522424656191:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS
-      ResourcesVpcConfig:
-        SubnetIds:
-          - subnet-0d65396d253631a43
-          - subnet-075ad7dce3167e662
-          - subnet-05932975c99209d15
-          - subnet-0fcb93f5ba8981de3
-      Version: "1.26"
 
   NodeGroup:
     Type: "AWS::EKS::Nodegroup"
