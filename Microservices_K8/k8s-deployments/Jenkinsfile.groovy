@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         DOCKERHUB_USERNAME = credentials('DockerHub_Connection')
-        AWS_ACCESS_KEY_ID     = credentials('AWS_Access_Key_ID')
+        AWS_ACCESS_KEY_ID = credentials('AWS_Access_Key_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_Secret_Access_Key')
-        AWS_DEFAULT_REGION    = 'us-east-2'
-        EKS_CLUSTER_NAME      = 'QuamTel'
+        AWS_DEFAULT_REGION = 'us-east-2'
+        EKS_CLUSTER_NAME = 'QuamTel'
         JENKINS_SECURITY_GROUP_ID = 'Jenkins-SG'
     }
 
@@ -50,6 +50,9 @@ pipeline {
                     // CloudFormation Stack Creation
                     sh "aws cloudformation create-stack --stack-name eks-cluster-stack --template-body file://Microservices_K8/k8s-deployments/eks-cluster.yml --parameters ParameterKey=ClusterName,ParameterValue=${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}"
                     sh "aws cloudformation wait stack-create-complete --stack-name eks-cluster-stack --region ${AWS_DEFAULT_REGION}"
+
+                    // Update Jenkins Security Group Inbound Rules
+                    sh "aws ec2 authorize-security-group-ingress --group-id ${JENKINS_SECURITY_GROUP_ID} --protocol tcp --port 6443 --source ${EKS_CLUSTER_NAME}"
 
                     // EKS Cluster Configuration
                     sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}"
