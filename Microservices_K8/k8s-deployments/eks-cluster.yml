@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "EKS Cluster Creation Stack"
 
+Parameters:
+  ClusterName:
+    Type: String
+    Description: "Name for the EKS Cluster"
+    Default: "QuamTel"
+
 Resources:
   EKSNodegroupRole:
     Type: "AWS::IAM::Role"
@@ -11,7 +17,9 @@ Resources:
         Statement:
           - Effect: "Allow"
             Principal:
-              Service: "eks-nodegroup.amazonaws.com"
+              Service:
+                - "eks.amazonaws.com"
+                - "eks-nodegroup.amazonaws.com"
             Action: "sts:AssumeRole"
 
   EKSCluster:
