@@ -1,13 +1,19 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "EKS Cluster Creation Stack"
 
-Parameters:
-  ClusterName:
-    Type: String
-    Description: "Name for the EKS Cluster"
-    Default: "QuamTel"
-
 Resources:
+  EKSNodegroupRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "EKSNodegroupRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "eks-nodegroup.amazonaws.com"
+            Action: "sts:AssumeRole"
+
   EKSCluster:
     Type: "AWS::EKS::Cluster"
     Properties:
@@ -26,17 +32,17 @@ Resources:
     DependsOn: EKSCluster
     Properties:
       ClusterName: !Ref ClusterName
-      NodegroupName: "TAS" 
+      NodegroupName: "TAS"
       ScalingConfig:
-        DesiredSize: 3 
-        MaxSize: 5        
-        MinSize: 1        
-      DiskSize: 20        
+        DesiredSize: 3
+        MaxSize: 5
+        MinSize: 1
+      DiskSize: 20
       Subnets:
         - subnet-0d65396d253631a43
         - subnet-075ad7dce3167e662
         - subnet-05932975c99209d15
         - subnet-0fcb93f5ba8981de3
       InstanceTypes:
-        - t3.small  
-      NodeRole: "arn:aws:iam::522424656191:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup"
+        - t3.small
+      NodeRole: !GetAtt EKSNodegroupRole.Arn
