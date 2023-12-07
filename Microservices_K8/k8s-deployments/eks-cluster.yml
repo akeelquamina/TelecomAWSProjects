@@ -66,6 +66,8 @@ Resources:
         SubnetIds:
           - subnet-0d65396d253631a43
           - subnet-075ad7dce3167e662
+          - subnet-05932975c99209d15
+          - subnet-0fcb93f5ba8981de3
       Version: "1.27"
 
   NodeGroup:
@@ -75,11 +77,13 @@ Resources:
       ClusterName: !Ref ClusterName
       NodegroupName: "TAS"
       ScalingConfig:
-        DesiredSize: 3
+        DesiredSize: 2
         MaxSize: 5
         MinSize: 1
       DiskSize: 20
       Subnets:
+        - subnet-0d65396d253631a43
+        - subnet-075ad7dce3167e662
         - subnet-05932975c99209d15
         - subnet-0fcb93f5ba8981de3
       InstanceTypes:
