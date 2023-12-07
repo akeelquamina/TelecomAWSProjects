@@ -2,10 +2,19 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: Test
-  region: us-east-2
+  name: "QuamTel"
+  region: "us-east-2"
 
 nodeGroups:
-  - name: ng-default
-    desiredCapacity: 2
-    instanceType: t3.small
+  - name: "TAS"
+    desiredCapacity: 3
+    maxSize: 5
+    minSize: 1
+    instancesDistribution:
+      maxPrice: "0.083"
+    volumeSize: 20
+    instanceType: "t3.small"
+    privateNetworking: true
+    subnets:
+      - subnet-05932975c99209d15
+      - subnet-0fcb93f5ba8981de3
