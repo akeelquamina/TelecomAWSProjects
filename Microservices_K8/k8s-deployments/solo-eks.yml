@@ -3,7 +3,7 @@ kind: ClusterConfig
 
 metadata:
   name: "QuamTel"
-  region: "us-east-2"
+  region: "us-east-1"
 
 nodeGroups:
   - name: "TAS"
