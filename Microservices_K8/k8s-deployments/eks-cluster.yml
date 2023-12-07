@@ -57,17 +57,6 @@ Resources:
                   - "autoscaling:DescribeLaunchConfigurations"
                 Resource: "*"
 
-  EKSClusterSecurityGroup:
-    Type: "AWS::EC2::SecurityGroup"
-    Properties:
-      GroupName: "EKSClusterSecurityGroup"
-      VpcId: "vpc-0dd90be52a719e88e" 
-      GroupDescription: "Security Group for EKS Cluster"
-      SecurityGroupIngress:
-        - CidrIp: "0.0.0.0/0"
-          Description: "Allow all traffic to EKS control plane"
-          IpProtocol: "-1"
-
   EKSCluster:
     Type: "AWS::EKS::Cluster"
     Properties:
@@ -77,10 +66,8 @@ Resources:
         SubnetIds:
           - subnet-0d65396d253631a43
           - subnet-075ad7dce3167e662
-        SecurityGroupIds:
-          - !Ref EKSClusterSecurityGroup
       Version: "1.26"
-  
+
   NodeGroup:
     Type: "AWS::EKS::Nodegroup"
     DependsOn: EKSCluster
@@ -98,5 +85,3 @@ Resources:
       InstanceTypes:
         - t3.small
       NodeRole: !GetAtt EKSNodegroupRole.Arn
-      SecurityGroups:
-        - !Ref EKSClusterSecurityGroup
