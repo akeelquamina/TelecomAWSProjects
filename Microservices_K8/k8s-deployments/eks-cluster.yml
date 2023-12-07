@@ -7,26 +7,6 @@ Parameters:
     Description: "Name for the EKS Cluster"
     Default: "QuamTel"
 
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: "VPC ID where the EKS cluster will be created"
-
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: "ID of the first public subnet"
-  
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: "ID of the second public subnet"
-
-  PrivateSubnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: "ID of the first private subnet"
-
-  PrivateSubnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: "ID of the second private subnet"
-
 Resources:
   EKSClusterRole:
     Type: "AWS::IAM::Role"
@@ -82,13 +62,11 @@ Resources:
     Properties:
       Name: !Ref ClusterName
       RoleArn: !GetAtt EKSClusterRole.Arn
+      Version: "1.27"
       ResourcesVpcConfig:
         SubnetIds:
-          - !Ref subnet-05932975c99209d15
-          - !Ref subnet-0fcb93f5ba8981de3
-          - !Ref subnet-0d65396d253631a43
-          - !Ref subnet-075ad7dce3167e662
-      Version: "1.27"
+          - subnet-0d65396d253631a43
+          - subnet-075ad7dce3167e662
 
   NodeGroup:
     Type: "AWS::EKS::Nodegroup"
@@ -97,13 +75,13 @@ Resources:
       ClusterName: !Ref ClusterName
       NodegroupName: "TAS"
       ScalingConfig:
-        DesiredSize: 2
+        DesiredSize: 3
         MaxSize: 5
         MinSize: 1
       DiskSize: 20
       Subnets:
-        - !Ref subnet-0d65396d253631a43
-        - !Ref subnet-075ad7dce3167e662
+        - subnet-0d65396d253631a43
+        - subnet-075ad7dce3167e662
       InstanceTypes:
         - t3.small
       NodeRole: !GetAtt EKSNodegroupRole.Arn
