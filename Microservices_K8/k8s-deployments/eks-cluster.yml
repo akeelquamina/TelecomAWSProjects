@@ -69,6 +69,7 @@ Resources:
           - subnet-05932975c99209d15
           - subnet-0fcb93f5ba8981de3
       Version: "1.27"
+      VpcId: "vpc-0dd90be52a719e88e"
 
   NodeGroup:
     Type: "AWS::EKS::Nodegroup"
