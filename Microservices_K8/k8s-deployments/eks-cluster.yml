@@ -66,7 +66,7 @@ Resources:
         SubnetIds:
           - subnet-0d65396d253631a43
           - subnet-075ad7dce3167e662
-      Version: "1.26"
+      Version: "1.27"
 
   NodeGroup:
     Type: "AWS::EKS::Nodegroup"
