@@ -98,3 +98,5 @@ Resources:
       InstanceTypes:
         - t3.small
       NodeRole: !GetAtt EKSNodegroupRole.Arn
+      SecurityGroups:
+        - !Ref EKSClusterSecurityGroup
