@@ -67,6 +67,9 @@ Resources:
         SubnetIds:
           - subnet-0d65396d253631a43
           - subnet-075ad7dce3167e662
+      VpcConfig:
+        EndpointPrivateAccess: true
+        EndpointPublicAccess: true
 
   NodeGroup:
     Type: "AWS::EKS::Nodegroup"
