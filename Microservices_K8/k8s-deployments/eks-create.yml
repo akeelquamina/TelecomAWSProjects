@@ -87,6 +87,5 @@ nodeGroups:
 
 cloudWatch:
   clusterLogging:
-    
     enableTypes: ["all"]
     logRetentionInDays: 60
