@@ -47,9 +47,8 @@ pipeline {
         stage('Create EKS Cluster') {
             steps {
                 script {
-                    // CloudFormation Stack Creation
-                    sh "aws cloudformation create-stack --stack-name eks-cluster-stack --template-body file://Microservices_K8/k8s-deployments/eks-cluster.yml --parameters ParameterKey=ClusterName,ParameterValue=${EKS_CLUSTER_NAME} --region ${AWS_DEFAULT_REGION} --capabilities CAPABILITY_NAMED_IAM"
-                    sh "aws cloudformation wait stack-create-complete --stack-name eks-cluster-stack --region ${AWS_DEFAULT_REGION}"
+                    // Create EKS Cluster using eksctl
+                    sh "eksctl create cluster -f Microservices_K8/k8s-deployments/eks-create.yml"
 
                     // Update Jenkins Security Group Inbound Rules
                     sh "aws ec2 authorize-security-group-ingress --group-id ${JENKINS_SECURITY_GROUP_ID} --protocol tcp --port 6443 --source ${EKS_CLUSTER_NAME}"

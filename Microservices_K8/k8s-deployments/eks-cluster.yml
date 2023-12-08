@@ -1,12 +1,47 @@
+---
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "EKS Cluster and NodeGroup Creation Stack"
 
 Parameters:
-  ClusterName:
-    Type: String
-    Description: "Name for the EKS Cluster"
-    Default: "QuamTel"
 
+  VpcBlock:
+    Type: String
+    Default: 172.20.0.0/16
+    Description: The CIDR range for the VPC.
+
+  PublicSubnet01Block:
+    Type: String
+    Default: 172.20.32.0/19
+    Description: CidrBlock for public subnet 01
+
+  PublicSubnet02Block:
+    Type: String
+    Default: 172.20.64.0/19
+    Description: CidrBlock for public subnet 02
+
+  PrivateSubnet01Block:
+    Type: String
+    Default: 172.20.128.0/19
+    Description: CidrBlock for private subnet 01
+
+  PrivateSubnet02Block:
+    Type: String
+    Default: 172.20.96.0/19
+    Description: CidrBlock for private subnet 02
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Worker Network Configuration"
+        Parameters:
+          - VpcBlock
+          - PublicSubnet01Block
+          - PublicSubnet02Block
+          - PrivateSubnet01Block
+          - PrivateSubnet02Block
+          
 Resources:
   EKSClusterRole:
     Type: "AWS::IAM::Role"
@@ -82,8 +117,8 @@ Resources:
         MinSize: 1
       DiskSize: 20
       Subnets:
-        - subnet-0d65396d253631a43  # Private Subnet
-        - subnet-075ad7dce3167e662  # Private Subnet
+        - subnet-0d65396d253631a43 
+        - subnet-075ad7dce3167e662  
       InstanceTypes:
         - t3.small
       NodeRole: !GetAtt EKSNodegroupRole.Arn
