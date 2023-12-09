@@ -30,7 +30,7 @@ vpc:
         cidr: "172.20.64.0/19" 
   clusterEndpoints:
     publicAccess: true
-    privateAccess: true
+    privateAccess: false
 
 addons:
   - name: vpc-cni
