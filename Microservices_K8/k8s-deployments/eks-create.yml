@@ -1,4 +1,4 @@
---- 
+---
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
@@ -10,27 +10,23 @@ vpc:
   id: "vpc-0dd90be52a719e88e" 
   cidr: "172.20.0.0/16"       
   subnets:
-    
     private:
       us-east-2a:
         id: "subnet-0d65396d253631a43"
         cidr: "172.20.128.0/19"
-
       us-east-2b:
         id: "subnet-075ad7dce3167e662"
         cidr: "172.20.96.0/19" 
-    
-    Public:  
+    public:  
       us-east-2a:
         id: "subnet-05932975c99209d15"
         cidr: "172.20.32.0/19"
-
       us-east-2b:
         id: "subnet-0fcb93f5ba8981de3"
         cidr: "172.20.64.0/19" 
   clusterEndpoints:
     publicAccess: true
-    privateAccess: false
+    privateAccess: true
 
 addons:
   - name: vpc-cni
@@ -60,21 +56,21 @@ iam:
     wellKnownPolicies:
       autoScaler: true
   - metadata:
-      name: autoscaler-service
+      name: eks-cluster-creator
       namespace: kube-system
-    attachPolicy: # inline policy can be defined along with `attachPolicyARNs`
+    attachPolicy:
       Version: "2012-10-17"
       Statement:
       - Effect: Allow
         Action:
-        - "autoscaling:DescribeAutoScalingGroups"
-        - "autoscaling:DescribeAutoScalingInstances"
-        - "autoscaling:DescribeLaunchConfigurations"
-        - "autoscaling:DescribeTags"
-        - "autoscaling:SetDesiredCapacity"
-        - "autoscaling:TerminateInstanceInAutoScalingGroup"
-        - "ec2:DescribeLaunchTemplateVersions"
-        Resource: '*'
+        - "eks:CreateCluster"
+        - "eks:CreateNodegroup"
+        - "eks:DeleteCluster"
+        - "eks:DeleteNodegroup"
+        - "eks:UpdateClusterConfig"
+        - "eks:UpdateNodegroupConfig"
+        - "eks:TagResource"
+      Resource: "*"
 
 nodeGroups:
   - name: Microservices-TAS
