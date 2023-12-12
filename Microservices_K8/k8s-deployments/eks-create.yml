@@ -20,9 +20,9 @@ subnets:
     us-east-2b:
       id: "subnet-0fcb93f5ba8981de3"
       cidr: "10.0.4.0/24"  # Replace with your desired CIDR block
-clusterEndpoints:
-  publicAccess: true
-  privateAccess: true
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: true
 
 addons:
   - name: vpc-cni
