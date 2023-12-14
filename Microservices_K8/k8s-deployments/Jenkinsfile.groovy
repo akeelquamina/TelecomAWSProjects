@@ -7,7 +7,6 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_Secret_Access_Key')
         AWS_DEFAULT_REGION = 'us-east-2'
         EKS_CLUSTER_NAME = 'QuamTel'
-        JENKINS_SECURITY_GROUP_ID = 'Jenkins-SG'
     }
 
     stages {
