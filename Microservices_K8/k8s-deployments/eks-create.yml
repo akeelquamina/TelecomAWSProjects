@@ -58,7 +58,6 @@ nodeGroups:
     instanceType: t3.small
     desiredCapacity: 2
     privateNetworking: true
-    keyName: "eks-nodes-key"
     iam:
       withAddonPolicies:
         autoScaler: true
