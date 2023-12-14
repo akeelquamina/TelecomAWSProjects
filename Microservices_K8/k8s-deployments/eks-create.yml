@@ -38,23 +38,6 @@ addons:
 
 iam:
   withOIDC: true
-  serviceAccounts:
-    - metadata:
-        name: autoscaler-service
-        namespace: kube-system
-      attachPolicy:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: Allow
-        Action:
-        - "autoscaling:DescribeAutoScalingGroups"
-        - "autoscaling:DescribeAutoScalingInstances"
-        - "autoscaling:DescribeLaunchConfigurations"
-        - "autoscaling:DescribeTags"
-        - "autoscaling:SetDesiredCapacity"
-        - "autoscaling:TerminateInstanceInAutoScalingGroup"
-        - "ec2:DescribeLaunchTemplateVersions"
-        Resource: '*'
 
 nodeGroups:
   - name: Microservices-TAS
