@@ -81,10 +81,7 @@ pipeline {
             steps {
                 script {
                     // Apply service configurations
-                    def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
-
-                    services.each { service ->
-                        sh "kubectl apply -f Microservices_K8/${service}/services.yaml"
+                        sh "kubectl apply -f Microservices_K8/k8s-deployments/services.yaml"
                     }
                 }
             }
