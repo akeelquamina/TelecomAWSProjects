@@ -61,9 +61,6 @@ Resources:
           sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
           sudo mv kubectl /usr/local/bin/
 
-
-
-
       Tags:
         - Key: Name
           Value: QuamTel-Pipeline
