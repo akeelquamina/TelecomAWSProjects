@@ -25,33 +25,36 @@ vpc:
       us-east-2b:
         id: "subnet-04667453a1860087f"
         cidr: "10.0.2.0/24"
+  sharedNodeSecurityGroup: sg-03208d34d2bb77158
+  manageSharedNodeSecurityGroupRules: false
   clusterEndpoints:
     publicAccess: true
     privateAccess: true
 
 addons:
-  - name: vpc-cni
-    version: latest
+  - name: vpc-cni # no version is specified so it deploys the default version
+    attachPolicyARNs:
+      - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
 
 iam:
   withOIDC: true
   serviceAccounts:
     - metadata:
-        name: aws-load-balancer-controller
+        name: autoscaler-service
         namespace: kube-system
-      wellKnownPolicies:
-        awsLoadBalancerController: true
-    - metadata:
-        name: external-dns
-        namespace: kube-system
-      wellKnownPolicies:
-        externalDNS: true
-    - metadata:
-        name: cluster-autoscaler
-        namespace: kube-system
-        labels: {aws-usage: "cluster-ops"}
-      wellKnownPolicies:
-        autoScaler: true
+      attachPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+        Action:
+        - "autoscaling:DescribeAutoScalingGroups"
+        - "autoscaling:DescribeAutoScalingInstances"
+        - "autoscaling:DescribeLaunchConfigurations"
+        - "autoscaling:DescribeTags"
+        - "autoscaling:SetDesiredCapacity"
+        - "autoscaling:TerminateInstanceInAutoScalingGroup"
+        - "ec2:DescribeLaunchTemplateVersions"
+        Resource: '*'
 
 nodeGroups:
   - name: Microservices-TAS
@@ -62,9 +65,11 @@ nodeGroups:
       withAddonPolicies:
         autoScaler: true
     subnets:
-      private:
-        us-east-2a: {}
-        us-east-2b: {}
+      - us-east-2a
+      - us-east-2b
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/cluster-13: "owned"
 
 cloudWatch:
   clusterLogging:
