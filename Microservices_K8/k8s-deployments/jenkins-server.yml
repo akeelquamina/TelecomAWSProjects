@@ -55,7 +55,6 @@ Resources:
           sudo systemctl enable docker.service
           sudo systemctl start docker.service
           sudo usermod -aG docker jenkins
-          sudo service jenkins restart
           sudo curl -LO https://dl.k8s.io/release/v1.28.4/bin/linux/amd64/kubectl
           sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256" #binary install
           sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
@@ -64,8 +63,7 @@ Resources:
           sudo mv /tmp/eksctl /usr/local/bin
           sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube/
           sudo chmod -R 700 /var/lib/jenkins/.kube/
-
-
+          sudo service jenkins restart
 
       Tags:
         - Key: Name
