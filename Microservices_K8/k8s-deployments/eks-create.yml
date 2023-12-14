@@ -32,7 +32,7 @@ vpc:
     privateAccess: true
 
 addons:
-  - name: vpc-cni # no version is specified so it deploys the default version
+  - name: vpc-cni
     attachPolicyARNs:
       - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
 
