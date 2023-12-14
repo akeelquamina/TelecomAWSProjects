@@ -51,11 +51,6 @@ iam:
         labels: {aws-usage: "cluster-ops"}
       wellKnownPolicies:
         autoScaler: true
-    - metadata:
-        name: eks-cluster-creator
-        namespace: kube-system
-      attachPolicy:
-        autoscaling: true  # Assuming this policy allows worker node autoscaling
 
 nodeGroups:
   - name: Microservices-TAS
