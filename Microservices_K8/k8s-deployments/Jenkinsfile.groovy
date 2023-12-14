@@ -7,6 +7,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_Secret_Access_Key')
         AWS_DEFAULT_REGION = 'us-east-2'
         EKS_CLUSTER_NAME = 'QuamTel'
+        PYTHON_VERSION = '3.9'  // Add Python version
     }
 
     stages {
@@ -14,9 +15,9 @@ pipeline {
             steps {
                 script {
                     // Install dependencies, e.g., urllib3
-                    sh 'python3 -m venv venv'
-                    sh 'source venv/bin/activate'
-                    sh 'pip install urllib3'
+                    sh "python${PYTHON_VERSION} -m venv venv"
+                    sh "source venv/bin/activate"
+                    sh "pip install urllib3"
                 }
             }
         }
@@ -73,6 +74,15 @@ pipeline {
                         sh "kubectl rollout status deployment ${service}"
                     }
                 }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up: deactivate virtual environment
+            script {
+                sh "deactivate || true"
             }
         }
     }
