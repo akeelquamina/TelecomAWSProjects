@@ -21,6 +21,7 @@ vpc:
       us-east-2a:
         id: "subnet-0bae8b8fd634a62d5"
         cidr: "10.0.1.0/24"
+        natGateway: true
       us-east-2b:
         id: "subnet-04667453a1860087f"
         cidr: "10.0.2.0/24"
@@ -57,9 +58,14 @@ nodeGroups:
     instanceType: t3.small
     desiredCapacity: 2
     privateNetworking: true
+    keyName: "eks-nodes-key"
     iam:
       withAddonPolicies:
-        autoScaler: true  # Assuming this policy allows worker node autoscaling
+        autoScaler: true
+    subnets:
+      private:
+        us-east-2a: {}
+        us-east-2b: {}
 
 cloudWatch:
   clusterLogging:
