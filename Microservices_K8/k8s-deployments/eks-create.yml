@@ -29,7 +29,7 @@ vpc:
   manageSharedNodeSecurityGroupRules: false
   clusterEndpoints:
     publicAccess: true
-    privateAccess: true
+    privateAccess: false
 
 addons:
   - name: vpc-cni
