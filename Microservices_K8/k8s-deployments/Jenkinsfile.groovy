@@ -10,6 +10,17 @@ pipeline {
     }
 
     stages {
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install dependencies, e.g., urllib3
+                    sh 'python3 -m venv venv'
+                    sh 'source venv/bin/activate'
+                    sh 'pip install urllib3'
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
