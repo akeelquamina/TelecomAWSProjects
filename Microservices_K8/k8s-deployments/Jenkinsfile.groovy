@@ -50,9 +50,6 @@ pipeline {
                     // Create EKS Cluster using eksctl
                     sh "eksctl create cluster -f Microservices_K8/k8s-deployments/eks-create.yml"
 
-                    // Update Jenkins Security Group Inbound Rules
-                    sh "aws ec2 authorize-security-group-ingress --group-id ${JENKINS_SECURITY_GROUP_ID} --protocol tcp --port 6443 --source ${EKS_CLUSTER_NAME}"
-
                     // EKS Cluster Configuration
                     sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}"
 
