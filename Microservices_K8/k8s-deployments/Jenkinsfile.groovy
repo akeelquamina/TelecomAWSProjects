@@ -81,8 +81,7 @@ pipeline {
             steps {
                 script {
                     // Apply service configurations
-                        sh "kubectl apply -f Microservices_K8/k8s-deployments/services.yaml"
-                    }
+                    sh "kubectl apply -f Microservices_K8/k8s-deployments/services.yaml"
                 }
             }
         }
