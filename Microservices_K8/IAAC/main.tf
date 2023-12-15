@@ -34,7 +34,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.AWS::StackName}-VPC"
+    Name = "${var.AWSStackName}-VPC"
   }
 }
 
@@ -192,4 +192,6 @@ resource "aws_instance" "jenkins_instance" {
 }
 
 output "jenkins_server_public_ip" {
-  description = "Public IP address of the Jenkins
+  description = "Public IP address of the Jenkins server"
+  value       = aws_instance.jenkins_instance.public_ip
+}
