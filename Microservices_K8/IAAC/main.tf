@@ -126,7 +126,7 @@ resource "aws_subnet" "public_subnet_01" {
   )
 
   tags = {
-    Name = "${var.AWS::StackName}-PublicSubnet0${count.index + 1}"
+    Name = "${var.AWSStackName}-PublicSubnet0${count.index + 1}"
     kubernetes.io/role/elb = 1
   }
 }
