@@ -31,12 +31,12 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: VPC ID where Jenkins EC2 instance will be launched
-    Default: !Ref 'VPC'
+    Default: !Ref "VPC"
 
   SubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: Subnet ID where Jenkins EC2 instance will be launched
-    Default: !Ref 'PublicSubnet01'
+    Default: !Ref "PublicSubnet01"
 
   InstanceType:
     Type: String
