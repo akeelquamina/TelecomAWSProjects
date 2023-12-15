@@ -1,4 +1,3 @@
----
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Amazon EKS Sample VPC - Private and Public subnets with Jenkins EC2 Instance'
 
@@ -36,7 +35,7 @@ Parameters:
   SubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: Subnet ID where Jenkins EC2 instance will be launched
-    Default: subnet-0123456789abcdef0
+    Default: !Ref PublicSubnet01  # Default to the public subnet
 
   InstanceType:
     Type: String
@@ -90,7 +89,7 @@ Resources:
               - Effect: Allow
                 Action: "*"
                 Resource: "*"
-                
+
   InternetGateway:
     Type: "AWS::EC2::InternetGateway"
 
@@ -298,7 +297,7 @@ Resources:
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           DeviceIndex: 0
-          SubnetId: !Ref SubnetId
+          SubnetId: !Ref PublicSubnet01  # Ensure Jenkins EC2 instance is in the public subnet
           GroupSet:
             - !Ref JenkinsSecurityGroup
       UserData:
