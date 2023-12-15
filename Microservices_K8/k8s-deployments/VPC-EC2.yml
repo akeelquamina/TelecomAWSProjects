@@ -36,7 +36,7 @@ Parameters:
   SubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: Subnet ID where Jenkins EC2 instance will be launched
-    Default: !ImportValue QuamTel-ENV-SubnetId
+    Default: 'subnet-0123456789abcdef0' !ImportValue QuamTel-ENV-SubnetId
 
   InstanceType:
     Type: String
