@@ -1,3 +1,4 @@
+---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Amazon EKS Sample VPC - Private and Public subnets with Jenkins EC2 Instance'
 
@@ -30,10 +31,12 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: VPC ID where Jenkins EC2 instance will be launched
+    Default: !ImportValue QuamTel-ENV-VPCId
 
   SubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: Subnet ID where Jenkins EC2 instance will be launched
+    Default: !ImportValue QuamTel-ENV-SubnetId
 
   InstanceType:
     Type: String
@@ -339,9 +342,14 @@ Resources:
           Value: QuamTel-Pipeline
 
 Outputs:
-  JenkinsServerPublicIP:
-    Description: Public IP address of the Jenkins server
-    Value: !GetAtt JenkinsInstance.PublicIp
-  JenkinsServerURL:
-    Description: URL to access Jenkins server
-    Value: !Sub 'http://${JenkinsInstance.PublicDnsName}:8080/'
+  VpcId:
+    Description: VPC Id
+    Value: !Ref VPC
+    Export:
+      Name: !Sub "${AWS::StackName}-VPCId"
+
+  SubnetId:
+    Description: Subnet Id
+    Value: !Ref PublicSubnet01  # Update this to the appropriate subnet
+    Export:
+      Name: !Sub "${AWS::StackName}-SubnetId"
