@@ -33,19 +33,10 @@ Parameters:
     Description: VPC ID where Jenkins EC2 instance will be launched
     Default: !ImportValue QuamTel-ENV-VPCId
 
-  SubnetType:
-    Type: String
-    Default: Public  # Set the default to Public or Private as needed
-    AllowedValues: [Public, Private]
-    Description: Specify whether to launch Jenkins in a Public or Private subnet
-
   SubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: Subnet ID where Jenkins EC2 instance will be launched
-    Default: !If [IsPublicSubnet, !Ref PublicSubnet01, !Ref PrivateSubnet01]
-
-Conditions:
-  IsPublicSubnet: !Equals [!Ref SubnetType, Public]
+    Default: !Ref PublicSubnet01Block
   
   InstanceType:
     Type: String
