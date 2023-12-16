@@ -32,11 +32,6 @@ variable "AWSStackName" {
   default = "QuamTel-ENV"
 }
 
-variable "PublicSubnetBlocks" {
-  type    = list(string)
-  default = ["10.0.1.0/24", "10.0.2.0/24"]
-}
-
 resource "aws_vpc" "vpc" {
   cidr_block = var.VpcBlock
 
@@ -76,7 +71,6 @@ resource "aws_vpn_gateway_attachment" "vpc_gateway_attachment" {
   vpn_gateway_id = aws_internet_gateway.internet_gateway.id
 }
 
-
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.vpc.id
 
@@ -86,12 +80,21 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
-resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.vpc.id
+resource "aws_subnet" "public_subnet_01" {
+  count = 2
+
+  cidr_block = element(var.PublicSubnetBlocks, count.index)
+  vpc_id     = aws_vpc.vpc.id
+
+  map_public_ip_on_launch = true
+
+  availability_zone = element(
+    aws_vpc.vpc[*].availability_zones,
+    count.index % length(aws_vpc.vpc[*].availability_zones)
+  )
 
   tags = {
-    Name    = "Private Subnets"
-    Network = "Private"
+    Name = "${var.AWSStackName}-PublicSubnet0${count.index + 1}"
   }
 }
 
@@ -120,25 +123,6 @@ resource "aws_security_group" "jenkins_security_group" {
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_subnet" "public_subnet_01" {
-  count = 2
-
-  cidr_block = element(var.PublicSubnetBlocks, count.index)
-  vpc_id     = aws_vpc.vpc.id
-
-  map_public_ip_on_launch = true
-
-  availability_zone = element(
-    aws_vpc.vpc.availability_zones,
-    count.index % length(aws_vpc.vpc.availability_zones)
-  )
-
-  tags = {
-    Name                       = "${var.AWSStackName}-PublicSubnet0${count.index + 1}"
-    kubernetes.io / role / elb = 1
   }
 }
 
