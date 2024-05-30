@@ -83,9 +83,12 @@ pipeline {
 
     post {
         always {
-            script {
-                // Clean up: deactivate virtual environment
-                sh "deactivate || true"
+            // Ensure the 'always' block is within a context-providing block like 'node'
+            node {
+                script {
+                    // Clean up: deactivate virtual environment
+                    sh "deactivate || true"
+                }
             }
         }
     }
