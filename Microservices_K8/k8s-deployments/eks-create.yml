@@ -1,0 +1,60 @@
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: "QuamTel"
+  region: us-east-2
+
+vpc:
+  id: "vpc-051fc6854f340547c"
+  cidr: "10.0.0.0/16"
+  subnets:
+    private:
+      us-east-2a:
+        id: "subnet-0f6ff5dec2c904cbe"
+        cidr: "10.0.3.0/24"
+      us-east-2b:
+        id: "subnet-03ba82fce1a1f9c32"
+        cidr: "10.0.4.0/24"
+    public:
+      us-east-2a:
+        id: "subnet-08e45d2271bd7dd40"
+        cidr: "10.0.1.0/24"
+        natGateway: true
+      us-east-2b:
+        id: "subnet-028fe1ac9837394f0"
+        cidr: "10.0.2.0/24"
+  sharedNodeSecurityGroup: sg-0191fd54b191020a3
+  manageSharedNodeSecurityGroupRules: false
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: false
+
+addons:
+  - name: vpc-cni
+    attachPolicyARNs:
+      - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+
+iam:
+  withOIDC: true
+
+nodeGroups:
+  - name: Microservices-TAS
+    instanceType: t3.small
+    desiredCapacity: 2
+    privateNetworking: true
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+    subnets:
+      - us-east-2a
+      - us-east-2b
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/cluster-13: "owned"
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["all"]
+    logRetentionInDays: 60
