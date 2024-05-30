@@ -83,15 +83,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            // Clean up: deactivate virtual environment
-            node {
-                script {
-                    sh "deactivate || true"
-                }
-            }
-        }
-    }
 }
