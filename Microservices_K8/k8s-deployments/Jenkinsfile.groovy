@@ -83,7 +83,7 @@ pipeline {
 
     post {
         always {
-            node {
+            script {
                 // Clean up: deactivate virtual environment
                 sh "deactivate || true"
             }
