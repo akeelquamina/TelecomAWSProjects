@@ -13,7 +13,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Install dependencies, e.g., urllib3
                     sh """
                     python${PYTHON_VERSION} -m venv venv
                     source venv/bin/activate
@@ -42,10 +41,8 @@ pipeline {
                         services.each { service ->
                             def fullImageName = "akeelquamina/${service}:${imageTag}"
 
-                            // Pull Docker image or ignore failure
                             sh "docker pull ${fullImageName} || true"
 
-                            // Build and push Docker image
                             sh """
                             docker buildx build -t ${fullImageName} ./Microservices_K8/${service}
                             docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
@@ -57,14 +54,10 @@ pipeline {
             }
         }
 
-        stage('Create EKS Cluster') {
+        stage('Update EKS Cluster Configuration') {
             steps {
                 script {
-                    // Create EKS Cluster using eksctl
-                    sh """
-                    eksctl create cluster -f Microservices_K8/k8s-deployments/eks-create.yml
-                    aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}
-                    """
+                    sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}"
 
                     def services = ['billing-service', 'call-routing-service', 'sms-notification-service']
 
@@ -82,7 +75,6 @@ pipeline {
         stage('Expose Services') {
             steps {
                 script {
-                    // Apply service configurations
                     sh "kubectl apply -f Microservices_K8/k8s-deployments/services.yaml"
                 }
             }
@@ -91,7 +83,6 @@ pipeline {
 
     post {
         always {
-            // Clean up: deactivate virtual environment
             script {
                 sh "deactivate || true"
             }
