@@ -75,7 +75,8 @@ fi
 
 # Delete Route Table Associations
 log "Deleting Route Table Associations..."
-ROUTE_TABLE_ID=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query 'Vpcs[0].VpcId' --output text)" --query 'RouteTables[0].RouteTableId' --output text)
+VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query 'Vpcs[0].VpcId' --output text)
+ROUTE_TABLE_ID=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC_ID" --query 'RouteTables[0].RouteTableId' --output text)
 ASSOCIATION_IDS=$(aws ec2 describe-route-tables --route-table-ids $ROUTE_TABLE_ID --query 'RouteTables[0].Associations[].RouteTableAssociationId' --output text)
 for ASSOCIATION_ID in $ASSOCIATION_IDS; do
     aws ec2 disassociate-route-table --association-id $ASSOCIATION_ID
@@ -87,11 +88,28 @@ log "Deleting Route Table..."
 aws ec2 delete-route-table --route-table-id $ROUTE_TABLE_ID
 log "Route Table deleted: $ROUTE_TABLE_ID"
 
+# Unmap and release Elastic IP addresses
+log "Disassociating and releasing Elastic IP addresses..."
+EIP_ALLOCATIONS=$(aws ec2 describe-addresses --filters "Name=domain,Values=vpc" --query "Addresses[?AssociationId].AllocationId" --output text)
+if [ -n "$EIP_ALLOCATIONS" ]; then
+    for ALLOCATION_ID in $EIP_ALLOCATIONS; do
+        ASSOCIATION_ID=$(aws ec2 describe-addresses --allocation-ids $ALLOCATION_ID --query "Addresses[0].AssociationId" --output text)
+        if [ "$ASSOCIATION_ID" != "None" ]; then
+            log "Disassociating Elastic IP $ALLOCATION_ID (Association ID: $ASSOCIATION_ID)"
+            aws ec2 disassociate-address --association-id $ASSOCIATION_ID
+        fi
+        log "Releasing Elastic IP $ALLOCATION_ID"
+        aws ec2 release-address --allocation-id $ALLOCATION_ID
+    done
+else
+    log "No Elastic IP addresses associated with the VPC."
+fi
+
 # Detach and Delete Internet Gateway
 log "Deleting Internet Gateway..."
-IGW_ID=$(aws ec2 describe-internet-gateways --filters "Name=attachment.vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query 'Vpcs[0].VpcId' --output text)" --query 'InternetGateways[0].InternetGatewayId' --output text)
+IGW_ID=$(aws ec2 describe-internet-gateways --filters "Name=attachment.vpc-id,Values=$VPC_ID" --query 'InternetGateways[0].InternetGatewayId' --output text)
 if [ "$IGW_ID" != "None" ]; then
-    aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query 'Vpcs[0].VpcId' --output text)
+    aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
     aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID
     log "Internet Gateway deleted: $IGW_ID"
 else
@@ -100,7 +118,7 @@ fi
 
 # Delete Subnets
 log "Deleting Subnets..."
-SUBNET_IDS=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query 'Vpcs[0].VpcId' --output text)" --query 'Subnets[].SubnetId' --output text)
+SUBNET_IDS=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[].SubnetId' --output text)
 for SUBNET_ID in $SUBNET_IDS; do
     aws ec2 delete-subnet --subnet-id $SUBNET_ID
     log "Subnet deleted: $SUBNET_ID"
@@ -108,7 +126,6 @@ done
 
 # Delete VPC
 log "Deleting VPC..."
-VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query 'Vpcs[0].VpcId' --output text)
 aws ec2 delete-vpc --vpc-id $VPC_ID
 log "VPC deleted: $VPC_ID"
 
