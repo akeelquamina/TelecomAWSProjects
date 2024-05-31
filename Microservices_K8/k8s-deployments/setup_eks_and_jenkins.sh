@@ -12,7 +12,7 @@ SECURITY_GROUP_NAME="EKS-QuamTel-SG"
 NODEGROUP_NAME="TAS"
 JENKINS_KEY_PAIR_NAME="quamtel_jenkins"
 JENKINS_AMI_ID="ami-06d4b7182ac3480fa"
-INSTANCE_TYPE="t2.medium"
+INSTANCE_TYPE="t3.medium"
 LOG_FILE="setup.log"
 
 # Logging function
@@ -208,7 +208,18 @@ log "Jenkins Security Group ID: $JENKINS_SECURITY_GROUP_ID"
 
 # Create Jenkins EC2 Instance
 log "Creating Jenkins EC2 Instance..."
-JENKINS_INSTANCE_ID=$(aws ec2 run-instances --image-id $JENKINS_AMI_ID --count 1 --instance-type $INSTANCE_TYPE --key-name $JENKINS_KEY_PAIR_NAME --security-group-ids $JENKINS_SECURITY_GROUP_ID --subnet-id $SUBNET_ID_1 --user-data file://jenkins_userdata.sh --query 'Instances[0].InstanceId' --output text)
+JENKINS_INSTANCE_ID=$(aws ec2 run-instances \
+    --image-id $JENKINS_AMI_ID \
+    --count 1 \
+    --instance-type $INSTANCE_TYPE \
+    --key-name $JENKINS_KEY_PAIR_NAME \
+    --security-group-ids $JENKINS_SECURITY_GROUP_ID \
+    --subnet-id $SUBNET_ID_1 \
+    --user-data file://jenkins_userdata.sh \
+    --iam-instance-profile Name=$JENKINS_ROLE_NAME \
+    --block-device-mappings DeviceName=/dev/xvda,Ebs={VolumeSize=50,VolumeType=gp3} \
+    --query 'Instances[0].InstanceId' --output text)
+
 aws ec2 create-tags --resources $JENKINS_INSTANCE_ID --tags Key=Name,Value=JenkinsServer
 log "Waiting for Jenkins EC2 Instance to be running..."
 aws ec2 wait instance-running --instance-ids $JENKINS_INSTANCE_ID
