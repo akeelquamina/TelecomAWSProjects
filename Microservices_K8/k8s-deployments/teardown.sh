@@ -51,17 +51,27 @@ log "SSH Key Pair deleted: $JENKINS_KEY_PAIR_NAME"
 
 # Delete Node Group
 log "Deleting Node Group..."
-aws eks delete-nodegroup --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME
-log "Waiting for Node Group to be deleted..."
-aws eks wait nodegroup-deleted --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME
-log "Node Group deleted"
+NODEGROUP_EXISTS=$(aws eks list-nodegroups --cluster-name $CLUSTER_NAME --query "nodegroups" --output text)
+if [ -n "$NODEGROUP_EXISTS" ]; then
+    aws eks delete-nodegroup --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME
+    log "Waiting for Node Group to be deleted..."
+    aws eks wait nodegroup-deleted --cluster-name $CLUSTER_NAME --nodegroup-name $NODEGROUP_NAME
+    log "Node Group deleted"
+else
+    log "Node Group not found."
+fi
 
 # Delete EKS Cluster
 log "Deleting EKS Cluster..."
-aws eks delete-cluster --name $CLUSTER_NAME
-log "Waiting for EKS Cluster to be deleted..."
-aws eks wait cluster-deleted --name $CLUSTER_NAME
-log "EKS Cluster deleted"
+CLUSTER_EXISTS=$(aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.name" --output text || echo "None")
+if [ "$CLUSTER_EXISTS" != "None" ]; then
+    aws eks delete-cluster --name $CLUSTER_NAME
+    log "Waiting for EKS Cluster to be deleted..."
+    aws eks wait cluster-deleted --name $CLUSTER_NAME
+    log "EKS Cluster deleted"
+else
+    log "EKS Cluster not found."
+fi
 
 # Delete Security Group
 log "Deleting Security Group..."
@@ -131,13 +141,24 @@ log "VPC deleted: $VPC_ID"
 
 # Delete IAM Roles
 log "Deleting IAM roles..."
-aws iam detach-role-policy --role-name eks-cluster-role --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
-aws iam delete-role --role-name eks-cluster-role
-log "IAM role deleted: eks-cluster-role"
-aws iam detach-role-policy --role-name eks-worker-node-role --policy-arn arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
-aws iam detach-role-policy --role-name eks-worker-node-role --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-aws iam detach-role-policy --role-name eks-worker-node-role --policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
-aws iam delete-role --role-name eks-worker-node-role
-log "IAM role deleted: eks-worker-node-role"
+ROLE_EXISTS=$(aws iam get-role --role-name eks-cluster-role --query "Role.RoleName" --output text || echo "None")
+if [ "$ROLE_EXISTS" != "None" ]; then
+    aws iam detach-role-policy --role-name eks-cluster-role --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+    aws iam delete-role --role-name eks-cluster-role
+    log "IAM role deleted: eks-cluster-role"
+else
+    log "IAM role eks-cluster-role not found."
+fi
+
+ROLE_EXISTS=$(aws iam get-role --role-name eks-worker-node-role --query "Role.RoleName" --output text || echo "None")
+if [ "$ROLE_EXISTS" != "None" ]; then
+    aws iam detach-role-policy --role-name eks-worker-node-role --policy-arn arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+    aws iam detach-role-policy --role-name eks-worker-node-role --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+    aws iam detach-role-policy --role-name eks-worker-node-role --policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+    aws iam delete-role --role-name eks-worker-node-role
+    log "IAM role deleted: eks-worker-node-role"
+else
+    log "IAM role eks-worker-node-role not found."
+fi
 
 log "Teardown completed successfully."
