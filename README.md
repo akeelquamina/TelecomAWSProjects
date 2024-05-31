@@ -30,6 +30,7 @@ Install Required Plugins:
 - Docker Pipeline
 - Amazon EC2
 - Kubernetes
+- Configuration as Code
 - Pipeline
 - Git
   
