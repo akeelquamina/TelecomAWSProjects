@@ -6,6 +6,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'us-east-2'
         EKS_CLUSTER_NAME = 'QuamTel'
         PYTHON_VERSION = '3.9'
+        SERVICES_YAML = 'services.yaml'
     }
 
     stages {
@@ -91,6 +92,27 @@ pipeline {
                             echo "Error updating EKS configuration: ${e.getMessage()}"
                             currentBuild.result = 'FAILURE'
                             error("Failed to update EKS configuration")
+                        }
+                    }
+                }
+            }
+        }
+        stage('Expose Services') {
+            steps {
+                withAWS(region: "${AWS_DEFAULT_REGION}", credentials: 'AWS_Credentials') {
+                    script {
+                        try {
+                            echo "Applying services exposure configuration"
+                            sh "kubectl apply -f ${SERVICES_YAML}"
+                            
+                            echo "Waiting for services to be exposed"
+                            sh "kubectl get services"
+                            
+                            echo "Services exposed successfully"
+                        } catch (Exception e) {
+                            echo "Error exposing services: ${e.getMessage()}"
+                            currentBuild.result = 'FAILURE'
+                            error("Failed to expose services")
                         }
                     }
                 }
