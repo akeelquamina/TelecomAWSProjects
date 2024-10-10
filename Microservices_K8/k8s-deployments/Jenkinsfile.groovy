@@ -103,7 +103,7 @@ pipeline {
                     script {
                         try {
                             echo "Applying services exposure configuration"
-                            sh "kubectl apply -f Microservices_K8/${SERVICES_YAML}"
+                            sh "kubectl apply -f Microservices_K8/k8s-deployments/${SERVICES_YAML}"
                             
                             echo "Waiting for services to be exposed"
                             sh "kubectl get services"
