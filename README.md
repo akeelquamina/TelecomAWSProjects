@@ -29,6 +29,7 @@ Install Required Plugins:
 
 - Docker Pipeline
 - Amazon EC2
+- AWS Steps
 - Kubernetes
 - Configuration as Code
 - Pipeline
