@@ -15,6 +15,11 @@ JENKINS_KEY_PAIR_NAME="quamtel_jenkins"
 JENKINS_AMI_ID="ami-06d4b7182ac3480fa"
 LOG_FILE="setup.log"
 
+# IAM Role Names
+CLUSTER_ROLE_NAME="eks-cluster-role"
+WORKER_ROLE_NAME="eks-worker-node-role"
+JENKINS_ROLE_NAME="QuamTel-jenkins-role"
+
 # Logging function
 log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a $LOG_FILE
@@ -175,6 +180,17 @@ log "EKS Cluster is now active"
 
 # Create Node Group
 log "Creating Node Group: $NODEGROUP_NAME"
+
+# Fetch the worker node IAM role ARN again to ensure correctness
+EKS_WORKER_NODE_ROLE_ARN=$(aws iam get-role --role-name eks-worker-node-role --query 'Role.Arn' --output text)
+
+if [ -z "$EKS_WORKER_NODE_ROLE_ARN" ]; then
+    log "Error: Failed to fetch EKS worker node role ARN"
+    exit 1
+fi
+
+log "Using EKS worker node role ARN: $EKS_WORKER_NODE_ROLE_ARN"
+
 if ! aws eks create-nodegroup \
     --cluster-name "$CLUSTER_NAME" \
     --nodegroup-name "$NODEGROUP_NAME" \
@@ -189,17 +205,17 @@ fi
 
 log "Node group creation initiated. Waiting for node group to become active..."
 
+# Wait for the node group to become active
 if ! aws eks wait nodegroup-active --cluster-name "$CLUSTER_NAME" --nodegroup-name "$NODEGROUP_NAME"; then
-    log "Node group did not become active in the expected time"
+    log "Error: Node group did not become active in the expected time"
     exit 1
 fi
 
-log "Node group is now active"
+log "Node group $NODEGROUP_NAME is now active"
 
 # Update kubeconfig
 log "Updating kubeconfig..."
 aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME
-
 
 # Create SSH Key Pair for Jenkins Server
 log "Creating SSH Key Pair for Jenkins Server..."
