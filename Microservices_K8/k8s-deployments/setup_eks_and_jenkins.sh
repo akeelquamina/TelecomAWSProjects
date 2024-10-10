@@ -173,9 +173,33 @@ fi
 
 log "EKS Cluster is now active"
 
+# Create Node Group
+log "Creating Node Group: $NODEGROUP_NAME"
+if ! aws eks create-nodegroup \
+    --cluster-name "$CLUSTER_NAME" \
+    --nodegroup-name "$NODEGROUP_NAME" \
+    --node-role "$EKS_WORKER_NODE_ROLE_ARN" \
+    --subnets "$SUBNET_ID_1" "$SUBNET_ID_2" "$SUBNET_ID_3" \
+    --instance-types "$INSTANCE_TYPE" \
+    --scaling-config minSize=2,maxSize=4,desiredSize=3 \
+    --output json > /dev/null; then
+    log "Failed to create node group"
+    exit 1
+fi
+
+log "Node group creation initiated. Waiting for node group to become active..."
+
+if ! aws eks wait nodegroup-active --cluster-name "$CLUSTER_NAME" --nodegroup-name "$NODEGROUP_NAME"; then
+    log "Node group did not become active in the expected time"
+    exit 1
+fi
+
+log "Node group is now active"
+
 # Update kubeconfig
 log "Updating kubeconfig..."
 aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME
+
 
 # Create SSH Key Pair for Jenkins Server
 log "Creating SSH Key Pair for Jenkins Server..."
