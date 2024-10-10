@@ -40,6 +40,7 @@ Set Up Credentials:
 DockerHub credentials with ID DockerHub_Connection.
 AWS Access Key ID and Secret Access Key with IDs AWS_Access_Key_ID and AWS_Secret_Access_Key.
 Set Up Jenkins Pipeline
+Add Script Path: Microservices_K8/k8s-deployments/Jenkinsfile.groovy
 Create a Jenkins pipeline with the following Jenkinsfile:
 
 **SEE REPO**
