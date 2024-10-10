@@ -69,7 +69,7 @@ pipeline {
                                 sh "kubectl apply -f Microservices_K8/${service}/k8s-manifest.yaml"
                         
                                 echo "Waiting for ${service} deployment to complete"
-                                def rolloutSuccess = sh(script: "kubectl rollout status deployment ${service} --timeout=600s", returnStatus: true)
+                                def rolloutSuccess = sh(script: "kubectl rollout status deployment ${service} --timeout=900s", returnStatus: true)
                         
                                 if (rolloutSuccess != 0) {
                                     echo "Deployment of ${service} failed or timed out. Collecting debug information:"
