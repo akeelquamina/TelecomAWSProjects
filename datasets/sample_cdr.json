@@ -1,0 +1,17 @@
+[
+    {
+      "caller_id": "+14165551234",
+      "receiver_id": "+919876543210",
+      "call_duration": 2,
+      "timestamp": "2025-03-29T14:21:00Z",
+      "call_type": "international"
+    },
+    {
+      "caller_id": "+14165559876",
+      "receiver_id": "+14168887777",
+      "call_duration": 120,
+      "timestamp": "2025-03-29T15:00:00Z",
+      "call_type": "local"
+    }
+  ]
+  
