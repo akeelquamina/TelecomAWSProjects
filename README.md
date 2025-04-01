@@ -159,11 +159,9 @@ Use the following test event:
 
 ``` sh
 {
-  "phoneNumber": "+14165556666",
-  "callType": "international",
-  "duration": 234,
-  "timestamp": "2025-03-30T18:00:00Z",
-  "location": "Toronto"
+  "phoneNumber": "+1234567890",
+  "callDuration": 120,
+  "riskScore": 75
 }
 ```
 
