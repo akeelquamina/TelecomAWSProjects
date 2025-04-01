@@ -105,15 +105,35 @@ aws dynamodb create-table \
     ]'
 ```
 
-### Create the Lambda Function
+### Create IAM Role
 
+Attach Trust Policy
+
+```sh
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "lambda.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+```
+
+### Create the Lambda Function
+```sh
 aws lambda create-function --function-name TelecomFraudDetector \
     --runtime nodejs18.x \
-    --role arn:aws:iam::522424656191:role/LambdaDynamoDBRole \
+    --role arn:aws:iam::522424656191:role/LambdaDynamoDBRole  \
     --handler index.handler \
     --timeout 15 \
     --memory-size 256 \
     --zip-file fileb://lambda_function.zip
+```
 
 
 ### 5. Deploy the Lambda Function
