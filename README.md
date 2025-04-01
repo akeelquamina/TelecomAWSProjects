@@ -153,7 +153,26 @@ aws lambda update-function-code --function-name TelecomFraudDetector --zip-file 
 - Created **CallTypeIndex**, **LocationIndex**, and **FlaggedCallsIndex** to allow efficient querying based on these attributes.
 
 ### 3. Testing & Verification
-- Deployed and tested the system with sample data.
+
+Use the following test event:
+
+``` sh
+{
+    "phoneNumber": "+14165551234",
+    "callDuration": 120,
+    "riskScore": 85
+}
+```
+
+If the test is successful, the response should look like:
+
+``` sh
+{
+  "statusCode": 200,
+  "body": "{\"message\": \"Call Data Stored\", \"callID\": \"some-uuid\", \"timestamp\": \"2025-03-31T20:15:00.123Z\"}"
+}
+``` 
+
 - Verified that queries against the new indexes return expected results.
 
 ## Conclusion
