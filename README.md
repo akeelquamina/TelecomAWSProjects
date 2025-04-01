@@ -131,16 +131,17 @@ aws lambda create-function --function-name TelecomFraudDetector \
     --role arn:aws:iam::522424656191:role/LambdaDynamoDBRole  \
     --handler index.handler \
     --timeout 15 \
-    --memory-size 256 \
-    --zip-file fileb://lambda_function.zip
+    --memory-size 256
 ```
 
 
 ### 5. Deploy the Lambda Function
+
 Zip your code and upload it to AWS Lambda or use AWS CLI:
 ```sh
-zip function.zip index.js
+zip -r function.zip index.js node_modules package.json
 aws lambda update-function-code --function-name TelecomFraudDetector --zip-file fileb://function.zip
+
 ```
 
 ## Phase 2: Enhancements
