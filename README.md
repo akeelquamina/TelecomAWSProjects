@@ -1,97 +1,107 @@
-# Telecom Fraud Detection with AWS Lambda
+# Telecom Fraud Detection with AWS
 
 ## Overview
-This project implements a **Telecom Fraud Detection System** using **AWS Lambda**, **DynamoDB**, and **AWS SDK for Node.js**. The system ingests call data and stores it in a DynamoDB table for further analysis.
+This project focuses on building a Telecom Fraud Detection System using AWS services. The system detects anomalies in call patterns and stores relevant data in DynamoDB for analysis. The development was divided into two phases:
 
-## Architecture
-- **AWS Lambda**: Processes incoming call data.
-- **DynamoDB**: Stores call records for further fraud detection.
-- **IAM Role**: Grants Lambda permissions to write to DynamoDB.
+- **Phase 1:** Setting up the Lambda function to store call data in DynamoDB.
+- **Phase 2:** Enhancing the system with anomaly detection and debugging issues encountered during deployment.
 
-## Prerequisites
-1. **AWS CLI Installed & Configured**
-2. **Node.js Installed**
-3. **DynamoDB Table Setup**
-   - Table Name: `TelecomCalls`
-   - Partition Key: `callID (S)`
-   - Sort Key: `timestamp (N)`
+## Phase 1: Setting Up AWS Lambda with DynamoDB
 
-## Setup & Deployment
-### 1. Install Dependencies
-Navigate to the `lambdas` directory and run:
+### 1. Create an AWS Lambda Function
+1. Navigate to AWS Lambda and create a new function.
+2. Choose **Node.js 18.x** as the runtime.
+3. Set up IAM permissions to allow Lambda to write to DynamoDB.
+
+### 2. Install Dependencies
+Ensure your development environment has the necessary dependencies:
 ```sh
+npm init -y
 npm install @aws-sdk/client-dynamodb uuid
 ```
 
-### 2. Create the Lambda Function
-#### **Lambda Code (`index.js`)**
+### 3. Write the Lambda Function
+Create an `index.js` file with the following content:
+
 ```javascript
-const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
-const { v4: uuidv4 } = require("uuid");
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { v4 as uuidv4 } from "uuid";
 
 const dynamoDB = new DynamoDBClient({ region: "us-east-2" });
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
     try {
         const callID = uuidv4();
-        const timestamp = Date.now().toString();
-
         const params = {
             TableName: process.env.TABLE_NAME || "TelecomCalls",
             Item: {
                 callID: { S: callID },
-                timestamp: { N: timestamp },
-                phoneNumber: { S: String(event.phoneNumber) },
+                phoneNumber: { S: event.phoneNumber },
                 callDuration: { N: event.callDuration.toString() },
-                riskScore: { N: event.riskScore.toString() }
+                riskScore: { N: event.riskScore.toString() },
+                timestamp: { S: new Date().toISOString() } // Required as sort key
             }
         };
 
         await dynamoDB.send(new PutItemCommand(params));
-        return { statusCode: 200, body: JSON.stringify({ message: "Call Data Stored", callID, timestamp }) };
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Call Data Stored", callID })
+        };
     } catch (error) {
-        return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message })
+        };
     }
 };
 ```
 
-### 3. Package the Code
+### 4. Deploy the Lambda Function
+Zip your code and upload it to AWS Lambda or use AWS CLI:
 ```sh
-zip -r lambda_function.zip index.js node_modules package.json
+zip function.zip index.js
+aws lambda update-function-code --function-name TelecomFraudDetector --zip-file fileb://function.zip
 ```
 
-### 4. Deploy to AWS Lambda
-```sh
-aws lambda create-function --function-name TelecomFraudDetector \
-    --runtime nodejs18.x \
-    --role arn:aws:iam::YOUR_ACCOUNT_ID:role/LambdaDynamoDBRole \
-    --handler index.handler \
-    --timeout 15 \
-    --memory-size 256 \
-    --zip-file fileb://lambda_function.zip
-```
+## Phase 2: Debugging & Enhancements
 
-### 5. Test the Function
-Create a `test-event.json` file:
+### 1. Resolving "Cannot use import statement outside a module"
+- Convert the file to ES module by updating `package.json`:
 ```json
 {
-    "phoneNumber": "+1234567890",
-    "callDuration": 300,
-    "riskScore": 0.8
+  "type": "module"
 }
 ```
-Run the test:
-```sh
-aws lambda invoke --function-name TelecomFraudDetector output.json --payload file://test-event.json
-```
-Check `output.json` for the response.
 
-## Next Steps
-- Implement fraud detection logic.
-- Integrate with a notification system (SNS, SES, or an alerting dashboard).
-- Expand functionality with data analysis tools (Amazon Athena, QuickSight).
+### 2. Handling Missing Sort Key (Timestamp)
+- The `timestamp` field was required in the DynamoDB table as a sort key. Ensure it's included in the Lambda function.
+
+### 3. Fixing GitHub Push Protection Errors
+If a secret is detected during `git push`, follow these steps:
+```sh
+git rev-list --objects --all | grep blobid  # Find the file containing the secret
+git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch path/to/file' --prune-empty --tag-name-filter cat -- --all
+git push origin --force
+```
+
+### 4. Resolving "fatal: 'origin' does not appear to be a git repository"
+Ensure the correct remote is set:
+```sh
+git remote -v  # Check remotes
+git remote add origin https://github.com/yourusername/TelecomAWSProjects.git
+git push origin telecom-fraud-detector --force
+```
+
+## Conclusion
+This project successfully implements a fraud detection system for telecom call records using AWS. The debugging process and solutions documented here will help in maintaining and expanding the system.
+
+### Future Enhancements
+- Implement AI-based fraud detection.
+- Add real-time alerting mechanisms.
+- Improve visualization for fraud reports.
 
 ---
-### Author
-**[Your Name]** - Cloud & Cybersecurity Enthusiast
+For any issues, feel free to open a GitHub issue or reach out!
 
