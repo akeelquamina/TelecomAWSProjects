@@ -4,7 +4,7 @@
 This project focuses on building a Telecom Fraud Detection System using AWS services. The system detects anomalies in call patterns and stores relevant data in DynamoDB for analysis. The development was divided into two phases:
 
 - **Phase 1:** Setting up the Lambda function to store call data in DynamoDB.
-- **Phase 2:** Enhancing the system with anomaly detection and debugging issues encountered during deployment.
+- **Phase 2:** Enhancing the system with anomaly detection and expanding data attributes.
 
 ## Phase 1: Setting Up AWS Lambda with DynamoDB
 
@@ -39,7 +39,10 @@ export const handler = async (event) => {
                 phoneNumber: { S: event.phoneNumber },
                 callDuration: { N: event.callDuration.toString() },
                 riskScore: { N: event.riskScore.toString() },
-                timestamp: { S: new Date().toISOString() } // Required as sort key
+                timestamp: { S: new Date().toISOString() }, // Required as sort key
+                callType: { S: event.callType },
+                location: { S: event.location },
+                isFlagged: { BOOL: event.isFlagged }
             }
         };
 
@@ -58,44 +61,72 @@ export const handler = async (event) => {
 };
 ```
 
-### 4. Deploy the Lambda Function
+### 4. Create the DynamoDB Table
+Run the following command to create the DynamoDB table with necessary attributes and indexes:
+
+```sh
+aws dynamodb create-table \
+    --table-name TelecomCalls \
+    --attribute-definitions \
+        AttributeName=phoneNumber,AttributeType=S \
+        AttributeName=timestamp,AttributeType=S \
+        AttributeName=callType,AttributeType=S \
+        AttributeName=location,AttributeType=S \
+        AttributeName=isFlagged,AttributeType=BOOL \
+    --key-schema \
+        AttributeName=phoneNumber,KeyType=HASH \
+        AttributeName=timestamp,KeyType=RANGE \
+    --billing-mode PAY_PER_REQUEST \
+    --global-secondary-indexes '[
+        {
+            "IndexName": "CallTypeIndex",
+            "KeySchema": [
+                {"AttributeName": "callType", "KeyType": "HASH"},
+                {"AttributeName": "timestamp", "KeyType": "RANGE"}
+            ],
+            "Projection": {"ProjectionType": "ALL"}
+        },
+        {
+            "IndexName": "LocationIndex",
+            "KeySchema": [
+                {"AttributeName": "location", "KeyType": "HASH"},
+                {"AttributeName": "timestamp", "KeyType": "RANGE"}
+            ],
+            "Projection": {"ProjectionType": "ALL"}
+        },
+        {
+            "IndexName": "FlaggedCallsIndex",
+            "KeySchema": [
+                {"AttributeName": "isFlagged", "KeyType": "HASH"},
+                {"AttributeName": "timestamp", "KeyType": "RANGE"}
+            ],
+            "Projection": {"ProjectionType": "ALL"}
+        }
+    ]'
+```
+
+### 5. Deploy the Lambda Function
 Zip your code and upload it to AWS Lambda or use AWS CLI:
 ```sh
 zip function.zip index.js
 aws lambda update-function-code --function-name TelecomFraudDetector --zip-file fileb://function.zip
 ```
 
-## Phase 2: Debugging & Enhancements
+## Phase 2: Enhancements
 
-### 1. Resolving "Cannot use import statement outside a module"
-- Convert the file to ES module by updating `package.json`:
-```json
-{
-  "type": "module"
-}
-```
+### 1. Expanding Data Attributes
+- Added `callType`, `location`, and `isFlagged` attributes to track more details about each call.
+- Updated the Lambda function to store these attributes.
 
-### 2. Handling Missing Sort Key (Timestamp)
-- The `timestamp` field was required in the DynamoDB table as a sort key. Ensure it's included in the Lambda function.
+### 2. Implementing Global Secondary Indexes
+- Created **CallTypeIndex**, **LocationIndex**, and **FlaggedCallsIndex** to allow efficient querying based on these attributes.
 
-### 3. Fixing GitHub Push Protection Errors
-If a secret is detected during `git push`, follow these steps:
-```sh
-git rev-list --objects --all | grep blobid  # Find the file containing the secret
-git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch path/to/file' --prune-empty --tag-name-filter cat -- --all
-git push origin --force
-```
-
-### 4. Resolving "fatal: 'origin' does not appear to be a git repository"
-Ensure the correct remote is set:
-```sh
-git remote -v  # Check remotes
-git remote add origin https://github.com/yourusername/TelecomAWSProjects.git
-git push origin telecom-fraud-detector --force
-```
+### 3. Testing & Verification
+- Deployed and tested the system with sample data.
+- Verified that queries against the new indexes return expected results.
 
 ## Conclusion
-This project successfully implements a fraud detection system for telecom call records using AWS. The debugging process and solutions documented here will help in maintaining and expanding the system.
+This project successfully implements a fraud detection system for telecom call records using AWS. The enhancements in Phase 2 improve data structuring and querying capabilities.
 
 ### Future Enhancements
 - Implement AI-based fraud detection.
