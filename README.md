@@ -105,6 +105,17 @@ aws dynamodb create-table \
     ]'
 ```
 
+### Create the Lambda Function
+
+aws lambda create-function --function-name TelecomFraudDetector \
+    --runtime nodejs18.x \
+    --role arn:aws:iam::522424656191:role/LambdaDynamoDBRole \
+    --handler index.handler \
+    --timeout 15 \
+    --memory-size 256 \
+    --zip-file fileb://lambda_function.zip
+
+
 ### 5. Deploy the Lambda Function
 Zip your code and upload it to AWS Lambda or use AWS CLI:
 ```sh
