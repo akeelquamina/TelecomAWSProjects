@@ -72,7 +72,7 @@ aws dynamodb create-table \
         AttributeName=timestamp,AttributeType=S \
         AttributeName=callType,AttributeType=S \
         AttributeName=location,AttributeType=S \
-        AttributeName=isFlagged,AttributeType=BOOL \
+        AttributeName=isFlagged,AttributeType=B \
     --key-schema \
         AttributeName=phoneNumber,KeyType=HASH \
         AttributeName=timestamp,KeyType=RANGE \
