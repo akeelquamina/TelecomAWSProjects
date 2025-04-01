@@ -1,0 +1,9 @@
+{
+  "name": "telecom-fraud-detector",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.32.0",
+    "uuid": "^9.0.0"
+  }
+}
