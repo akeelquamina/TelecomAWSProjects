@@ -141,7 +141,7 @@ aws lambda create-function \
 
 Zip your code and upload it to AWS Lambda or use AWS CLI:
 ```sh
-zip -r function.zip index.js node_modules package.json
+zip -r lambda_function.zip index.js node_modules package.json
 aws lambda update-function-code --function-name TelecomFraudDetector --zip-file fileb://lambda_function.zip
 
 ```
