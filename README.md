@@ -126,12 +126,14 @@ Attach Trust Policy
 
 ### Create the Lambda Function
 ```sh
-aws lambda create-function --function-name TelecomFraudDetector \
-    --runtime nodejs18.x \
-    --role arn:aws:iam::522424656191:role/LambdaDynamoDBRole  \
-    --handler index.handler \
-    --timeout 15 \
-    --memory-size 256
+aws lambda create-function \
+  --function-name TelecomFraudDetector \
+  --runtime nodejs18.x \
+  --role arn:aws:iam::522424656191:role/LambdaDynamoDBRole \
+  --handler index.handler \
+  --timeout 15 \
+  --memory-size 256 \
+  --zip-file fileb://lambda_function.zip
 ```
 
 
