@@ -163,7 +163,10 @@ Use the following test event:
 {
   "phoneNumber": "+1234567890",
   "callDuration": 120,
-  "riskScore": 75
+  "riskScore": 75,
+  "callType": "international",
+  "location": "New York",
+  "isFlagged": true
 }
 ```
 
@@ -172,7 +175,7 @@ If the test is successful, the response should look like:
 ``` sh
 {
   "statusCode": 200,
-  "body": "{\"message\": \"Call Data Stored\", \"callID\": \"some-uuid\", \"timestamp\": \"2025-03-31T20:15:00.123Z\"}"
+  "body": "{\"message\": \"Call Data Stored\", \"callID\": \"some-uuid\"}"
 }
 ``` 
 
