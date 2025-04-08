@@ -185,7 +185,40 @@ Phase 3: Real-Time Alerts with AWS SNS
 
 1. Adding SNS Alerting
 
-Integrated Amazon SNS to send real-time email alerts for flagged calls.
+``` sh
+aws sns create-topic --name FraudAlerts
+
+```
+
+Subscribe your email:
+
+``` sh
+aws sns subscribe \
+  --topic-arn arn:aws:sns:us-east-2:YOUR_ACCOUNT_ID:FraudAlerts \
+  --protocol email \
+  --notification-endpoint youremail@example.com
+```
+
+NB. You’ll receive a confirmation email — make sure to confirm!
+
+-Add Permissions for SNS to Lambda IAM Role
+Update your IAM role with permissions via JSON file or in AWS GUI:
+
+``` sh
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:us-east-2:YOUR_ACCOUNT_ID:FraudAlerts"
+    }
+  ]
+}
+```
+
+
+
 
 2. Updated Lambda Code
 
