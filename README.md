@@ -181,7 +181,7 @@ If the test is successful, the response should look like:
 
 - Verified that queries against the new indexes return expected results.
 
-Phase 3: Real-Time Alerts with AWS SNS
+### Phase 3: Real-Time Alerts with AWS SNS
 
 1. Adding SNS Alerting
 
