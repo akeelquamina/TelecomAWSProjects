@@ -42,7 +42,7 @@ export const handler = async (event) => {
                 timestamp: { S: new Date().toISOString() }, // Required as sort key
                 callType: { S: event.callType },
                 location: { S: event.location },
-                isFlagged: { BOOL: event.isFlagged }
+                isFlagged: { S: isFlagged.toString() } 
             }
         };
 
@@ -72,7 +72,7 @@ aws dynamodb create-table \
         AttributeName=timestamp,AttributeType=S \
         AttributeName=callType,AttributeType=S \
         AttributeName=location,AttributeType=S \
-        AttributeName=isFlagged,AttributeType=B \
+        AttributeName=isFlagged,AttributeType=S \
     --key-schema \
         AttributeName=phoneNumber,KeyType=HASH \
         AttributeName=timestamp,KeyType=RANGE \
