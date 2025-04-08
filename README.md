@@ -293,3 +293,15 @@ Location: ${input.location}`;
 
 ```
 
+3. Test with This Event
+
+``` sh
+{
+  "phoneNumber": "+16475550000",
+  "callDuration": 120,
+  "riskScore": 85,
+  "callType": "international",
+  "location": "Toronto"
+}
+
+```
