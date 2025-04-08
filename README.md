@@ -5,6 +5,7 @@ This project focuses on building a Telecom Fraud Detection System using AWS serv
 
 - **Phase 1:** Setting up the Lambda function to store call data in DynamoDB.
 - **Phase 2:** Enhancing the system with anomaly detection and expanding data attributes.
+- **Phase 3:** Adding Real time alerting with AWS SNS
 
 ## Phase 1: Setting Up AWS Lambda with DynamoDB
 
