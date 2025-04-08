@@ -202,9 +202,9 @@ aws sns subscribe \
   --notification-endpoint youremail@example.com
 ```
 
-## NB. You’ll receive a confirmation email — make sure to confirm!
+### NB. You’ll receive a confirmation email — make sure to confirm!
 
-# Add Permissions for SNS to Lambda IAM Role
+### Add Permissions for SNS to Lambda IAM Role
 Update your IAM role with permissions via JSON file or in AWS GUI:
 
 ``` sh
