@@ -24,7 +24,7 @@ npm install @aws-sdk/client-dynamodb uuid
 ### 3. Write the Lambda Function
 Create an `index.js` file with the following content:
 
-```javascript
+``` sh
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 
@@ -63,7 +63,7 @@ export const handler = async (event) => {
 ```
 
 ### 4. Create the DynamoDB Table
-Run the following command to create the DynamoDB table with necessary attributes and indexes:
+Run the following command to create the DynamoDB table with the necessary attributes and indexes:
 
 ```sh
 aws dynamodb create-table \
@@ -126,6 +126,7 @@ Attach Trust Policy
 ```
 
 ### Create the Lambda Function
+
 ```sh
 aws lambda create-function \
   --function-name TelecomFraudDetector \
@@ -182,16 +183,16 @@ If the test is successful, the response should look like:
 
 - Verified that queries against the new indexes return expected results.
 
-### Phase 3: Real-Time Alerts with AWS SNS
+## Phase 3: Real-Time Alerts with AWS SNS
 
-1. Adding SNS Alerting
+### 1. Adding SNS Alerting
 
 ``` sh
 aws sns create-topic --name FraudAlerts
 
 ```
 
-Subscribe your email:
+## Subscribe your email:
 
 ``` sh
 aws sns subscribe \
@@ -200,9 +201,9 @@ aws sns subscribe \
   --notification-endpoint youremail@example.com
 ```
 
-NB. You’ll receive a confirmation email — make sure to confirm!
+## NB. You’ll receive a confirmation email — make sure to confirm!
 
--Add Permissions for SNS to Lambda IAM Role
+# Add Permissions for SNS to Lambda IAM Role
 Update your IAM role with permissions via JSON file or in AWS GUI:
 
 ``` sh
@@ -219,9 +220,7 @@ Update your IAM role with permissions via JSON file or in AWS GUI:
 ```
 
 
-
-
-2. Updated Lambda Code
+## 2. Updated Lambda Code
 
 Update the index.js file:
 
@@ -294,7 +293,7 @@ Location: ${input.location}`;
 
 ```
 
-3. Test with This Event
+## 3. Test with This Event
 
 ``` sh
 {
