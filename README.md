@@ -181,14 +181,82 @@ If the test is successful, the response should look like:
 
 - Verified that queries against the new indexes return expected results.
 
-## Conclusion
-This project successfully implements a fraud detection system for telecom call records using AWS. The enhancements in Phase 2 improve data structuring and querying capabilities.
+Phase 3: Real-Time Alerts with AWS SNS
 
-### Future Enhancements
-- Implement AI-based fraud detection.
-- Add real-time alerting mechanisms.
-- Improve visualization for fraud reports.
+1. Adding SNS Alerting
 
----
-For any issues, feel free to open a GitHub issue or reach out!
+Integrated Amazon SNS to send real-time email alerts for flagged calls.
+
+2. Updated Lambda Code
+
+Update the index.js file:
+
+``` sh
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { v4 as uuidv4 } from "uuid";
+
+const dynamoDB = new DynamoDBClient({ region: "us-east-2" });
+const sns = new SNSClient({ region: "us-east-2" });
+
+const SNS_TOPIC_ARN = process.env.SNS_TOPIC_ARN;
+
+export const handler = async (event) => {
+  let input = event;
+
+  // Handle SNS or SQS-wrapped events
+  if (event.Records && event.Records[0].body) {
+    input = JSON.parse(event.Records[0].body);
+  }
+
+  try {
+    const callID = uuidv4();
+
+    const isFlagged = input.riskScore >= 70 && input.callDuration > 60;
+
+    const params = {
+      TableName: process.env.TABLE_NAME || "TelecomCalls",
+      Item: {
+        callID: { S: callID },
+        phoneNumber: { S: input.phoneNumber },
+        callDuration: { N: input.callDuration.toString() },
+        riskScore: { N: input.riskScore.toString() },
+        timestamp: { S: new Date().toISOString() },
+        callType: { S: input.callType },
+        location: { S: input.location },
+        isFlagged: { S: isFlagged.toString() } 
+      }
+    };
+
+    await dynamoDB.send(new PutItemCommand(params));
+
+    if (isFlagged && SNS_TOPIC_ARN) {
+      const alertMessage = `🚨 Suspicious call detected!
+Phone: ${input.phoneNumber}
+Duration: ${input.callDuration}s
+Risk Score: ${input.riskScore}
+Location: ${input.location}`;
+
+      await sns.send(
+        new PublishCommand({
+          TopicArn: SNS_TOPIC_ARN,
+          Subject: "🚨 Fraud Alert Detected",
+          Message: alertMessage,
+        })
+      );
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Call analyzed and stored", callID, isFlagged })
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+};
+
+```
 
