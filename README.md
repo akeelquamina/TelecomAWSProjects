@@ -66,6 +66,7 @@ export const handler = async (event) => {
 Run the following command to create the DynamoDB table with the necessary attributes and indexes:
 
 ```sh
+
 aws dynamodb create-table \
     --table-name TelecomCalls \
     --attribute-definitions \
