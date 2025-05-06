@@ -6,6 +6,7 @@ This project focuses on building a Telecom Fraud Detection System using AWS serv
 - **Phase 1:** Setting up the Lambda function to store call data in DynamoDB.
 - **Phase 2:** Enhancing the system with anomaly detection and expanding data attributes.
 - **Phase 3:** Adding Real time alerting with AWS SNS
+- **Phase 4:** Data Visualization with Amazon QuickSight
 
 ## Phase 1: Setting Up AWS Lambda with DynamoDB
 
@@ -306,3 +307,117 @@ Location: ${input.location}`;
 }
 
 ```
+## Phase 4: Data Visualization with Amazon QuickSight
+
+## Step 1: Export DynamoDB Table to S3
+Used DynamoDB Streams + Lambda to write data in real-time to S3 in .gz compressed JSON format.
+
+## Step 2: Create and Run AWS Glue Job to Flatten Data
+Created a Spark-based Glue Job to read the nested data from S3, extract the fields, and flatten the structure.
+
+Output written back to a flattened path: s3://your-bucket/flattened/
+
+Glue Job Script (Python):
+
+``` sh
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.dynamicframe import DynamicFrame
+import sys
+
+args = getResolvedOptions(sys.argv, ["JOB_NAME"])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args["JOB_NAME"], args["JOB_NAME"])
+
+# Read nested JSON
+datasource = glueContext.create_dynamic_frame.from_options(
+    connection_type="s3",
+    connection_options={"paths": ["s3://your-bucket/path-to-exported-data/"]},
+    format="json"
+)
+
+# Flatten JSON
+flattened = datasource.map(lambda row: {
+    "callID": row["Item"]["callID"]["S"],
+    "phoneNumber": row["Item"]["phoneNumber"]["S"],
+    "riskScore": int(row["Item"]["riskScore"]["N"]),
+    "callType": row["Item"]["callType"]["S"],
+    "callDuration": int(row["Item"]["callDuration"]["N"]),
+    "timestamp": row["Item"]["timestamp"]["S"],
+    "isFlagged": row["Item"]["isFlagged"]["S"],
+    "location": row["Item"]["location"]["S"]
+})
+
+flattened_df = spark.createDataFrame(flattened)
+glue_flattened = DynamicFrame.fromDF(flattened_df, glueContext, "glue_flattened")
+
+# Write flattened data
+glueContext.write_dynamic_frame.from_options(
+    frame=glue_flattened,
+    connection_type="s3",
+    connection_options={"path": "s3://your-bucket/flattened/"},
+    format="json"
+)
+
+job.commit()
+
+```
+
+## Step 3: IAM Role for Glue Job
+Attached the following IAM policy to the Glue job role:
+
+``` sh
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::your-bucket",
+        "arn:aws:s3:::your-bucket/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:*",
+        "glue:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+
+```
+## Step 4: Query Flattened Data with Athena
+Crawled s3://your-bucket/flattened/ with Glue Crawler
+
+Athena successfully queried the flattened table with:
+
+``` sh
+SELECT * FROM telecom_flattened LIMIT 10;
+```
+### Step 5: Visualize in QuickSight
+Used Athena as a data source to import the flattened dataset
+
+Built a multi-chart dashboard to monitor fraud metrics:
+
+KPIs: Total Calls, Flagged Calls, Average Risk Score
+
+Line Chart: Risk Score over Time
+
+Bar Chart: Top Risk Callers
+
+Heatmap: Call Type vs Flagged Status
+
+Map: Risk by Location
