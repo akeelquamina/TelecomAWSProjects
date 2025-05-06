@@ -133,12 +133,17 @@ Attach Trust Policy
 aws lambda create-function \
   --function-name TelecomFraudDetector \
   --runtime nodejs18.x \
-  --role arn:aws:iam::522424656191:role/LambdaDynamoDBRole \
+  --role arn:aws:I am::<YOUR ARN>:role/<YOUR DB ROLE> \
   --handler index.handler \
   --timeout 15 \
   --memory-size 256 \
   --zip-file fileb://lambda_function.zip
 ```
+### Update Table Environment Varibales
+
+aws lambda update-function-configuration \
+  --function-name YourLambdaFunctionName \
+  --environment "Variables={TABLE_NAME=TelecomCalls,SNS_TOPIC_ARN=arn:aws:sns:REGION:ACCOUNT_ID:your-topic-name}"
 
 
 ### 5. Deploy the Lambda Function
